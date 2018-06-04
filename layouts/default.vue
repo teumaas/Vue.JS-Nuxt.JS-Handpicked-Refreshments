@@ -46,7 +46,7 @@
         drawer: true,
         fixed: false,
         items: [
-          { icon: 'apps', title: 'Welcome', to: '/' },
+          { icon: 'apps', title: 'Welkom', to: '/' },
           { icon: 'local_bar', title: 'Producten', to: '/products' }
         ],
         miniVariant: false,

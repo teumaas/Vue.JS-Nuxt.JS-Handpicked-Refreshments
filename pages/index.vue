@@ -7,7 +7,7 @@
       <v-card>
         <v-card-title class="headline">Handpicked Refreshments</v-card-title>
         <v-card-text>
-          <p>Welkom bij de Handpicked Refreshments administator controlpanel.</p>
+          <p>Welkom bij het Handpicked Refreshments administator controlpanel.</p>
         </v-card-text>
       </v-card>
     </v-flex>
