@@ -13,7 +13,8 @@ import {
   VDataTable,
   VDialog,
   VTextField,
-  VAlert
+  VAlert,
+  VAvatar
 } from 'vuetify'
 
 Vue.use(Vuetify, {
@@ -30,6 +31,7 @@ Vue.use(Vuetify, {
     VDataTable,
     VDialog,
     VTextField,
-    VAlert
+    VAlert,
+    VAvatar
   }
 })
