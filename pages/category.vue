@@ -26,6 +26,7 @@
         </v-card> 
     </v-dialog>
 
+
     <v-dialog v-model="deleteD" persistent max-width="290px">
       <v-card>
         <v-card-title class="headline">Verwijder categorie</v-card-title>
