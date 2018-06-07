@@ -3,7 +3,7 @@
     <v-dialog v-model="createD" persistent max-width="500px">
         <v-card>
           <v-card-title>
-              <span class="headline">Attribuut toevoegen</span>
+              <span class="headline">Vergaderruimte Toevoegen</span>
           </v-card-title>
           <v-card-text>
             <v-container grid-list-md>
@@ -15,6 +15,7 @@
             </v-container>
           </v-card-text>
           <v-card-actions>
+            <v-spacer></v-spacer>
             <v-btn color="blue darken-1" flat @click.native="createD = false">Annuleren</v-btn>
             <v-btn color="blue darken-1" flat @click="createP(item)">Opslaan</v-btn>
           </v-card-actions>
@@ -24,7 +25,7 @@
     <v-dialog v-model="editD" persistent max-width="500px">
         <v-card>
           <v-card-title>
-              <span class="headline">Attribuut bewerken</span>
+              <span class="headline">Vergaderruimte Bewerken</span>
           </v-card-title>
           <v-card-text>
             <v-container grid-list-md>
@@ -45,8 +46,8 @@
 
     <v-dialog v-model="deleteD" persistent max-width="290px">
       <v-card>
-        <v-card-title class="headline">Attribuut Verwijderen</v-card-title>
-        <v-card-text>Weet u zeker dat u het geselecteerde attribuut wilt verwijderen?</v-card-text>
+        <v-card-title class="headline">Vergaderruimte Verwijderen</v-card-title>
+        <v-card-text>Weet u zeker dat de geselecteerde vergaderruimte wilt verwijderen?</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" flat @click.native="deleteD = false">Annuleren</v-btn>
@@ -57,7 +58,7 @@
 
     <v-card-title>
       <v-flex style="margin-top: 15px;" xs12 sm6 text-xs-left>
-        <v-btn color="primary" @click="createItem()">Nieuw attribuut <v-icon dark> add</v-icon></v-btn>
+        <v-btn color="primary" @click="createItem()">Nieuwe attributen <v-icon dark> add</v-icon></v-btn>
       </v-flex>
       <v-spacer></v-spacer>
       <v-text-field v-model="search" append-icon="search" label="Zoeken..." single-line hide-details></v-text-field>
@@ -68,8 +69,6 @@
           <td class="text-xs-left"></td>
           <td class="text-xs-left">{{ props.item.attributeID }}</td>
           <td class="text-xs-left">{{ props.item.name }}</td>
-          <td class="text-xs-left">
-          </td>
           <td class="justify-left layout px-0">
             <v-btn icon class="mx-0" @click="editItem(props.item)">
               <v-icon color="teal">edit</v-icon>
@@ -91,7 +90,6 @@
   </div>
 </template>
 
-
 <script>
   import axios from 'axios'
 
@@ -110,7 +108,7 @@
           sortable: false,
           value: 'name'
         },
-        { text: 'Attribute ID', value: 'attributeID' },
+        { text: 'Attribuut ID', value: 'attributeID' },
         { text: 'Naam', value: 'name' },
         { text: 'Acties', value: 'name', sortable: false }
       ],
@@ -141,115 +139,116 @@
 
       deleteD (val) {
         val || this.close()
-      },
-      /* Here the DataTable will be loaded */
-      created () {
-        this.getAttributes()
-      },
+      }
+    },
 
-      methods: {
+    /* Here the DataTable will be loaded */
+    created () {
+      this.getAttributes()
+    },
+
+    methods: {
       /* UI Logic for CRUD Functions. */
-        createItem () {
-          this.createD = true
-        },
+      createItem () {
+        this.createD = true
+      },
 
-        editItem (item) {
-          this.itemIndex = this.attributes.indexOf(item)
-          this.item = Object.assign({}, item)
-          this.editD = true
-        },
+      editItem (item) {
+        this.itemIndex = this.attributes.indexOf(item)
+        this.item = Object.assign({}, item)
+        this.editD = true
+      },
 
-        deleteItem (item) {
-          this.itemIndex = this.attributes.indexOf(item)
-          this.item = Object.assign({}, item)
-          this.deleteD = true
-        },
+      deleteItem (item) {
+        this.itemIndex = this.attributes.indexOf(item)
+        this.item = Object.assign({}, item)
+        this.deleteD = true
+      },
 
-        close () {
-          this.createD = false
-          this.editD = false
-          this.deleteD = false
-          setTimeout(() => {
-            this.item = Object.assign({}, this.defaultItem)
-            this.itemIndex = -1
-          }, 300)
-        },
+      close () {
+        this.createD = false
+        this.editD = false
+        this.deleteD = false
+        setTimeout(() => {
+          this.item = Object.assign({}, this.defaultItem)
+          this.itemIndex = -1
+        }, 300)
+      },
 
-        createP (item) {
-          this.postAttribute(item)
-        },
+      createP (item) {
+        this.postAttribute(item)
+      },
 
-        updateP (item) {
-          this.updateAttribute(item)
-        },
+      updateP (item) {
+        this.updateAttribute(item)
+      },
 
-        deleteP (item) {
-          this.deleteAttribute(item)
-        },
+      deleteP (item) {
+        this.deleteAttribute(item)
+      },
 
-        /* API Logic for CRUD Functions. */
-        getAttributes () {
-          this.loading = true
-          this.refreshBtn = false
-          axios.get('https://handpicked-refreshments.herokuapp.com/api/product/attributes/all/')
-            .then(response => {
-              this.attributes = response.data
-              this.loading = false
-            })
-            .catch(error => {
-              console.log(error)
-              this.refreshBtn = false
-            })
-        },
+      /* API Logic for CRUD Functions. */
+      getAttributes () {
+        this.loading = true
+        this.refreshBtn = false
+        axios.get('https://handpicked-refreshments.herokuapp.com/api/product/attribute/all')
+          .then(response => {
+            this.attributes = response.data
+            this.loading = false
+          })
+          .catch(error => {
+            console.log(error)
+            this.refreshBtn = false
+          })
+      },
 
-        postAttribute (item) {
-          const querystring = require('querystring')
-          const data = {
-            name: item.name
-          }
-          const header = {
-            ContentType: 'application/x-www-form-urlencoded',
-            Accept: 'application/json'
-          }
-          axios.post('https://handpicked-refreshments.herokuapp.com/api/product/attribute/', querystring.stringify(data), header)
-            .then(response => {
-              this.getAttributes()
-              this.close()
-            })
-            .catch(error => {
-              console.log(error)
-            })
-        },
-
-        updateAttributes (item) {
-          const data = {
-            name: item.name
-          }
-          const header = {
-            ContentType: 'application/x-www-form-urlencoded',
-            Accept: 'application/json'
-          }
-          axios.put('https://handpicked-refreshments.herokuapp.com/api/product/attributes/' + item.attributeID, data, header)
-            .then(response => {
-              this.getAttributes()
-              this.close()
-            })
-            .catch(error => {
-              console.log(error)
-            })
-        },
-
-        deleteAttribute (item) {
-          axios.delete('https://handpicked-refreshments.herokuapp.com/api/product/attribute/' + item.attributeID)
-            .then(response => {
-              this.getAttributes()
-              this.close()
-            })
-            .catch(error => {
-              console.log(error)
-            })
+      postAttribute (item) {
+        const querystring = require('querystring')
+        const data = {
+          name: item.name
         }
+        const header = {
+          ContentType: 'application/x-www-form-urlencoded',
+          Accept: 'application/json'
+        }
+        axios.post('https://handpicked-refreshments.herokuapp.com/api/product/attribute/', querystring.stringify(data), header)
+          .then(response => {
+            this.getAttributes()
+            this.close()
+          })
+          .catch(error => {
+            console.log(error)
+          })
+      },
+
+      updateAttribute (item) {
+        const data = {
+          name: item.name
+        }
+        const header = {
+          ContentType: 'application/x-www-form-urlencoded',
+          Accept: 'application/json'
+        }
+        axios.put('https://handpicked-refreshments.herokuapp.com/api/product/attribute/' + item.attributeID, data, header)
+          .then(response => {
+            this.getAttributes()
+            this.close()
+          })
+          .catch(error => {
+            console.log(error)
+          })
+      },
+
+      deleteAttribute (item) {
+        axios.delete('https://handpicked-refreshments.herokuapp.com/api/product/attribute/' + item.attributeID)
+          .then(response => {
+            this.getAttributes()
+            this.close()
+          })
+          .catch(error => {
+            console.log(error)
+          })
       }
     }
-}
+  }
 </script>
