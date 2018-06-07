@@ -49,7 +49,8 @@
           { icon: 'apps', title: 'Welkom', to: '/' },
           { icon: 'local_bar', title: 'Producten beheren', to: '/products' },
           { icon: 'loyalty', title: 'Categorieën beheren', to: '/category' },
-          { icon: 'tablet_android', title: 'Tablets beheren', to: '/tablet' }
+          { icon: 'tablet_android', title: 'Tablets beheren', to: '/tablet' },
+          { icon: 'meeting_room', title: 'Vergaderruimtes', to: '/rooms' }
         ],
         miniVariant: false,
         right: true,
