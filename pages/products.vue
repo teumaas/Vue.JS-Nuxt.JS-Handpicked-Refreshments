@@ -12,7 +12,7 @@
                   <v-text-field v-model="item.name" label="Naam"></v-text-field>
                 </v-flex>
                 <v-flex xs12>
-                  <v-text-field v-model="item.pictureURL" label="Afbeelding"></v-text-field>
+                  <v-text-field v-model="item.imageURL" label="Afbeelding"></v-text-field>
                 </v-flex>
               </v-layout>
             </v-container>
@@ -37,7 +37,7 @@
                   <v-text-field v-model="item.name" label="Naam"></v-text-field>
                 </v-flex>
                 <v-flex xs12>
-                  <v-text-field v-model="item.pictureURL" label="Afbeelding"></v-text-field>
+                  <v-text-field v-model="item.imageURL" label="Afbeelding"></v-text-field>
                 </v-flex>
               </v-layout>
             </v-container>
@@ -67,7 +67,7 @@
         <v-card-title class="headline">Afbeelding</v-card-title>
           <v-flex text-xs-center layout align-center justify-center>
             <v-avatar :tile="false" :size="256">
-              <img :src="item.pictureURL" :alt="item.name">
+              <img :src="item.imageURL" :alt="item.name">
             </v-avatar>
           </v-flex>
         <v-card-actions>
@@ -84,31 +84,34 @@
       <v-spacer></v-spacer>
       <v-text-field v-model="search" append-icon="search" label="Zoeken..." single-line hide-details></v-text-field>
     </v-card-title>   
-    <v-data-table :headers="headers" :items="products" :search="search" hide-actions class="elevation-1">
-      <template slot="items" slot-scope="props">
-        <td class="text-xs-left"></td>
-        <td class="text-xs-left">{{ props.item.productID }}</td>
-        <td class="text-xs-left">{{ props.item.name }}</td>
-        <td class="text-xs-left">
-          <v-avatar class="justify-left">
-            <img :src="props.item.pictureURL" @click="imageItem(props.item)">    
-          </v-avatar>
-        </td>
-        <td class="justify-left layout px-0">
-          <v-btn icon class="mx-0" @click="editItem(props.item)">
-            <v-icon color="teal">edit</v-icon>
-          </v-btn>
-          <v-btn icon class="mx-0" dark @click="deleteItem(props.item)">
-            <v-icon color="red">delete</v-icon>
-          </v-btn>
-        </td>
-      </template>
-      <template slot="no-data">
-        <v-btn color="primary" @click="getProducts">Reset</v-btn>
-      </template>
-      <div class="text-md-center" slot="no-results" :value="true">
-        Geen resultaten gevonden voor "{{ search }}".
-      </div>
+    <v-data-table :loading="loading" :headers="headers" :items="products" :search="search" hide-actions class="elevation-1">
+      <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
+        <template slot="items" slot-scope="props" >
+          <td class="text-xs-left"></td>
+          <td class="text-xs-left">{{ props.item.productID }}</td>
+          <td class="text-xs-left">{{ props.item.name }}</td>
+          <td class="text-xs-left">
+            <v-avatar class="justify-left">
+              <img :src="props.item.imageURL" @click="imageItem(props.item)">    
+            </v-avatar>
+          </td>
+          <td class="justify-left layout px-0">
+            <v-btn icon class="mx-0" @click="editItem(props.item)">
+              <v-icon color="teal">edit</v-icon>
+            </v-btn>
+            <v-btn icon class="mx-0" dark @click="deleteItem(props.item)">
+              <v-icon color="red">delete</v-icon>
+            </v-btn>
+          </td>
+        </template>
+        <template slot="no-data">
+          <div style="display: none;" class="text-md-center" :value="refreshBtn">
+            <v-btn round color="primary" @click="getProducts" ><v-icon>refresh</v-icon> Vernieuwen</v-btn>
+          </div>
+        </template>
+        <div class="text-md-center" slot="no-results" :value="true">
+          Geen resultaten gevonden voor "{{ search }}".
+        </div>
     </v-data-table>
   </div>
 </template>
@@ -124,16 +127,17 @@
       deleteD: false,
       imageD: false,
       search: '',
-      hidden: false,
+      loading: true,
+      refreshBtn: false,
       headers: [
         {
-          align: 'left',
+          align: 'center',
           sortable: false,
           value: 'name'
         },
         { text: 'Product ID', value: 'productID' },
         { text: 'Naam', value: 'name' },
-        { text: 'Afbeelding', value: 'pictureURL' },
+        { text: 'Afbeelding', value: 'imageURL' },
         { text: 'Acties', value: 'name', sortable: false }
       ],
       products: [],
@@ -141,12 +145,12 @@
       item: {
         productID: 0,
         name: '',
-        pictureURL: ''
+        imageURL: ''
       },
       defaultItem: {
         productID: 0,
         name: '',
-        pictureURL: ''
+        imageURL: ''
       }
     }),
 
@@ -226,38 +230,67 @@
 
       /* API Logic for CRUD Functions. */
       getProducts () {
-        axios.get(`https://handpicked-refreshments.herokuapp.com/api/product`).then(response => {
-          this.products = response.data
-        })
+        this.loading = true
+        this.refreshBtn = false
+        axios.get('https://handpicked-refreshments.herokuapp.com/api/product/')
+          .then(response => {
+            this.products = response.data
+            this.loading = false
+          })
+          .catch(error => {
+            console.log(error)
+            this.refreshBtn = false
+          })
       },
 
-      postProduct () {
-
+      postProduct (item) {
+        const querystring = require('querystring')
+        const data = {
+          name: item.name,
+          imageURL: item.imageURL
+        }
+        const header = {
+          ContentType: 'application/x-www-form-urlencoded',
+          Accept: 'application/json'
+        }
+        axios.post('https://handpicked-refreshments.herokuapp.com/api/product/', querystring.stringify(data), header)
+          .then(response => {
+            this.getProducts()
+            this.close()
+          })
+          .catch(error => {
+            console.log(error)
+          })
       },
 
       updateProduct (item) {
-        axios.put(`https://handpicked-refreshments.herokuapp.com/api/product/` + item.productID, {
+        const data = {
           name: item.name,
-          pictureURL: item.pictureURL
-        },
-        { headers: { 'Content-Type': 'application/json; charset=utf-8' } }
-        ).then(function (response) {
-          console.log(response)
-        }).catch(function (error) {
-          console.log(error)
-        })
-        this.close()
+          imageURL: item.imageURL
+        }
+        const header = {
+          ContentType: 'application/x-www-form-urlencoded',
+          Accept: 'application/json'
+        }
+        axios.put('https://handpicked-refreshments.herokuapp.com/api/product/' + item.productID, data, header)
+          .then(response => {
+            this.getProducts()
+            this.close()
+          })
+          .catch(error => {
+            console.log(error)
+          })
       },
 
       deleteProduct (item) {
-        console.log(item)
-        axios.delete(`https://handpicked-refreshments.herokuapp.com/api/product/` + item.productID)
-          .then(function (response) {
-            console.log(response)
-          }).catch(function (error) {
+        axios.delete('https://handpicked-refreshments.herokuapp.com/api/product/' + item.productID)
+          .then(response => {
+            this.getProducts()
+            this.close()
+          })
+          .catch(error => {
             console.log(error)
           })
-        this.close()
       }
     }
   }

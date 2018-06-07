@@ -14,7 +14,8 @@ import {
   VDialog,
   VTextField,
   VAlert,
-  VAvatar
+  VAvatar,
+  VProgressLinear
 } from 'vuetify'
 
 Vue.use(Vuetify, {
@@ -32,6 +33,7 @@ Vue.use(Vuetify, {
     VDialog,
     VTextField,
     VAlert,
-    VAvatar
+    VAvatar,
+    VProgressLinear
   }
 })
