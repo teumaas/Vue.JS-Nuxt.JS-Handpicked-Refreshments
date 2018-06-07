@@ -3,7 +3,7 @@
     <v-dialog v-model="createD" persistent max-width="500px">
         <v-card>
           <v-card-title>
-              <span class="headline">Categorie Toevoegen</span>
+              <span class="headline">Categorie toevoegen</span>
           </v-card-title>
           <v-card-text>
             <v-container grid-list-md>
@@ -28,7 +28,7 @@
     <v-dialog v-model="editD" persistent max-width="500px">
         <v-card>
           <v-card-title>
-              <span class="headline">Categorie Bewerken</span>
+              <span class="headline">Categorie bewerken</span>
           </v-card-title>
           <v-card-text>
             <v-container grid-list-md>
@@ -53,7 +53,7 @@
     <v-dialog v-model="deleteD" persistent max-width="290px">
       <v-card>
         <v-card-title class="headline">Categorie Verwijderen</v-card-title>
-        <v-card-text>Weet u zeker dat de geselecteerde categorie wilt verwijderen?</v-card-text>
+        <v-card-text>Weet u zeker dat u de geselecteerde categorie wilt verwijderen?</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" flat @click.native="deleteD = false">Annuleren</v-btn>
@@ -84,31 +84,34 @@
       <v-spacer></v-spacer>
       <v-text-field v-model="search" append-icon="search" label="Zoeken..." single-line hide-details></v-text-field>
     </v-card-title>   
-    <v-data-table :headers="headers" :items="categories" :search="search" hide-actions class="elevation-1">
-      <template slot="items" slot-scope="props">
-        <td class="text-xs-left"></td>
-        <td class="text-xs-left">{{ props.item.categoryID }}</td>
-        <td class="text-xs-left">{{ props.item.name }}</td>
-        <td class="text-xs-left">
-          <v-avatar class="justify-left">
-            <img :src="props.item.imageURL" @click="imageItem(props.item)">    
-          </v-avatar>
-        </td>
-        <td class="justify-left layout px-0">
-          <v-btn icon class="mx-0" @click="editItem(props.item)">
-            <v-icon color="teal">edit</v-icon>
-          </v-btn>
-          <v-btn icon class="mx-0" dark @click="deleteItem(props.item)">
-            <v-icon color="red">delete</v-icon>
-          </v-btn>
-        </td>
-      </template>
-      <template slot="no-data">
-        <v-btn color="primary" @click="getCategories">Reset</v-btn>
-      </template>
-      <div class="text-md-center" slot="no-results" :value="true">
-        Geen resultaten gevonden voor "{{ search }}".
-      </div>
+    <v-data-table :loading="loading" :headers="headers" :items="categories" :search="search" hide-actions class="elevation-1">
+      <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
+        <template slot="items" slot-scope="props" >
+          <td class="text-xs-left"></td>
+          <td class="text-xs-left">{{ props.item.categoryID }}</td>
+          <td class="text-xs-left">{{ props.item.name }}</td>
+          <td class="text-xs-left">
+            <v-avatar class="justify-left">
+              <img :src="props.item.imageURL" @click="imageItem(props.item)">    
+            </v-avatar>
+          </td>
+          <td class="justify-left layout px-0">
+            <v-btn icon class="mx-0" @click="editItem(props.item)">
+              <v-icon color="teal">edit</v-icon>
+            </v-btn>
+            <v-btn icon class="mx-0" dark @click="deleteItem(props.item)">
+              <v-icon color="red">delete</v-icon>
+            </v-btn>
+          </td>
+        </template>
+        <template slot="no-data">
+          <div style="display: none;" class="text-md-center" :value="refreshBtn">
+            <v-btn round color="primary" @click="getCategories" ><v-icon>refresh</v-icon> Vernieuwen</v-btn>
+          </div>
+        </template>
+        <div class="text-md-center" slot="no-results" :value="true">
+          Geen resultaten gevonden voor "{{ search }}".
+        </div>
     </v-data-table>
   </div>
 </template>
@@ -124,14 +127,15 @@
       deleteD: false,
       imageD: false,
       search: '',
-      hidden: false,
+      loading: true,
+      refreshBtn: false,
       headers: [
         {
-          align: 'left',
+          align: 'center',
           sortable: false,
           value: 'name'
         },
-        { text: 'Category ID', value: 'categoryID' },
+        { text: 'Categorie ID', value: 'categoryID' },
         { text: 'Naam', value: 'name' },
         { text: 'Afbeelding', value: 'imageURL' },
         { text: 'Acties', value: 'name', sortable: false }
@@ -213,7 +217,7 @@
       },
 
       createP (item) {
-        this.postCategories(item)
+        this.postCategory(item)
       },
 
       updateP (item) {
@@ -226,48 +230,67 @@
 
       /* API Logic for CRUD Functions. */
       getCategories () {
-        axios.get(`https://handpicked-refreshments.herokuapp.com/api/category/all`).then(response => {
-          this.categories = response.data
-        })
+        this.loading = true
+        this.refreshBtn = false
+        axios.get('https://handpicked-refreshments.herokuapp.com/api/category/all')
+          .then(response => {
+            this.categories = response.data
+            this.loading = false
+          })
+          .catch(error => {
+            console.log(error)
+            this.refreshBtn = false
+          })
       },
 
-      postCategories (item) {
-        axios.post(`https://handpicked-refreshments.herokuapp.com/api/category/`, {
+      postCategory (item) {
+        const querystring = require('querystring')
+        const data = {
           name: item.name,
           imageURL: item.imageURL
-        },
-        { headers: { 'Content-Type': 'application/json; charset=utf-8' } }
-        ).then(function (response) {
-          console.log(response)
-        }).catch(function (error) {
-          console.log(error)
-        })
-        this.close()
+        }
+        const header = {
+          ContentType: 'application/x-www-form-urlencoded',
+          Accept: 'application/json'
+        }
+        axios.post('https://handpicked-refreshments.herokuapp.com/api/category/', querystring.stringify(data), header)
+          .then(response => {
+            this.getCategories()
+            this.close()
+          })
+          .catch(error => {
+            console.log(error)
+          })
       },
 
       updateCategory (item) {
-        axios.put(`https://handpicked-refreshments.herokuapp.com/api/category/` + item.categoryID, {
+        const data = {
           name: item.name,
           imageURL: item.imageURL
-        },
-        { headers: { 'Content-Type': 'application/json; charset=utf-8' } }
-        ).then(function (response) {
-          console.log(response)
-        }).catch(function (error) {
-          console.log(error)
-        })
-        this.close()
+        }
+        const header = {
+          ContentType: 'application/x-www-form-urlencoded',
+          Accept: 'application/json'
+        }
+        axios.put('https://handpicked-refreshments.herokuapp.com/api/category/' + item.categoryID, data, header)
+          .then(response => {
+            this.getCategories()
+            this.close()
+          })
+          .catch(error => {
+            console.log(error)
+          })
       },
 
       deleteCategory (item) {
-        console.log(item)
-        axios.delete(`https://handpicked-refreshments.herokuapp.com/api/category/` + item.categoryID)
-          .then(function (response) {
-            console.log(response)
-          }).catch(function (error) {
+        axios.delete('https://handpicked-refreshments.herokuapp.com/api/category/' + item.categoryID)
+          .then(response => {
+            this.getCategories()
+            this.close()
+          })
+          .catch(error => {
             console.log(error)
           })
-        this.close()
       }
     }
   }
