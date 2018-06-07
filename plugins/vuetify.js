@@ -9,7 +9,13 @@ import {
   VBtn,
   VIcon,
   VGrid,
-  VToolbar
+  VToolbar,
+  VDataTable,
+  VDialog,
+  VTextField,
+  VAlert,
+  VAvatar,
+  VProgressLinear
 } from 'vuetify'
 
 Vue.use(Vuetify, {
@@ -22,6 +28,12 @@ Vue.use(Vuetify, {
     VBtn,
     VIcon,
     VGrid,
-    VToolbar
+    VToolbar,
+    VDataTable,
+    VDialog,
+    VTextField,
+    VAlert,
+    VAvatar,
+    VProgressLinear
   }
 })
