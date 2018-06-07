@@ -47,7 +47,9 @@
         fixed: false,
         items: [
           { icon: 'apps', title: 'Welkom', to: '/' },
-          { icon: 'local_bar', title: 'Producten', to: '/products' }
+          { icon: 'local_bar', title: 'Producten beheren', to: '/products' },
+          { icon: 'loyalty', title: 'Categorieën beheren', to: '/category' },
+          { icon: 'tablet_android', title: 'Tablets beheren', to: '/tablet' }
         ],
         miniVariant: false,
         right: true,
