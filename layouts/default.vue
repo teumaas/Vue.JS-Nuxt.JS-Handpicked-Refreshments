@@ -47,7 +47,8 @@
         fixed: false,
         items: [
           { icon: 'apps', title: 'Welkom', to: '/' },
-          { icon: 'local_bar', title: 'Producten', to: '/products' }
+          { icon: 'local_bar', title: 'Producten', to: '/products' },
+          { icon: 'meeting_room', title: 'Vergaderruimtes', to: '/rooms' }
         ],
         miniVariant: false,
         right: true,
