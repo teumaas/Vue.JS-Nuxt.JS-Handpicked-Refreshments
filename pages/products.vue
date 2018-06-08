@@ -375,6 +375,19 @@
           .catch(error => {
             console.log(error)
           })
+      },
+      getAttributesByProductID (item) {
+        this.loading = true
+        this.refreshBtn = false
+        axios.get('https://handpicked-refreshments.herokuapp.com/api/product/attribute/all')
+          .then(response => {
+            this.attributes = response.data
+            this.loading = false
+          })
+          .catch(error => {
+            console.log(error)
+            this.refreshBtn = false
+          })
       }
     }
   }
