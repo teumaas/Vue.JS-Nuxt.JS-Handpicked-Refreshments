@@ -77,31 +77,32 @@
       </v-card>
     </v-dialog>
 
-        <v-dialog v-model="addAt" persistent max-width="290px">
+    <v-dialog v-model="addAt" persistent max-width="290px">
       <v-card>
-        <v-card-title class="headline">Attributen toevoegen aan + {{ item.name }} </v-card-title>
-        <v-card-text>Selecteer een attribuut die u wil toevoegen</v-card-text>
-        <v-card-actions>
-          <v-spacer>
+        <v-card-title class="headline">Attributen toevoegen aan {{ item.name }} </v-card-title>
+         <v-card-text>Selecteer een attribuut die u wil toevoegen</v-card-text>
+         <v-container grid-list-md>
+           <v-layout wrap>
             <v-flex xs12>
                   <v-select 
                     v-model="value"
                     track-by="name" 
                     label="Attribuut" 
                     placeholder="Voeg attributen toe" 
-                    :itemsAt = "attributes"
-                    :options="options" 
-                    :searchable="true" 
+                    :items="attributes" 
+                    item-text="name"
+                    return-object
                     :allow-empty="true"
-                    :multiple="false"
                     :close-on-select="false"
                     :hide-selected="true">
-                    <template slot="tag" slot-scope="props">{{ props.option.name }}</template>
                   </v-select>
                 </v-flex>
-          </v-spacer>
+              </v-layout>
+              </v-container>
+              <v-card-actions>
+              <v-spacer></v-spacer>
           <v-btn color="blue darken-1" flat @click.native="addAt = false">Annuleren</v-btn>
-          <!--<v-btn color="blue darken-1" flat @click.native="addAttribute(item, props.selected)">Bevestigen</v-btn>-->
+          <v-btn color="blue darken-1" flat @click="addAttribute(item, value)">Bevestigen</v-btn>        
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -133,6 +134,9 @@
             </v-btn>
             <v-btn icon class="mx-0" @click="attributeItem(props.item)">
               <v-icon dark>add</v-icon>
+            </v-btn>
+            <v-btn icon class="mx-0" @click="attributeItemDelete(props.item)">
+              <v-icon dark>minimize</v-icon>
             </v-btn>
           </td>
         </template>
@@ -186,13 +190,11 @@
         name: '',
         imageURL: ''
       },
-      attributes: [],
-      itemA: {
-        attributeID: 0,
-        name: ''
-      }
+      attributes: [
+        { attributeID: 0, name: '' }
+      ]
     }),
-
+    // itemAt:
     computed: {
     },
 
@@ -250,7 +252,7 @@
       },
 
       attributeItem (item) {
-        this.itemIndex = this.product.indexOf(item)
+        this.itemIndex = this.products.indexOf(item)
         this.item = Object.assign({}, item)
         this.addAt = true
       },
@@ -359,8 +361,7 @@
             console.log(error)
             this.refreshBtn = false
           })
-      }
-      /*,
+      },
       addAttribute (item, attribute) {
         const header = {
           ContentType: 'application/x-www-form-urlencoded',
@@ -369,13 +370,12 @@
         axios.post('https://handpicked-refreshments.herokuapp.com/api/product/' + item.productID + '/attribute/' + attribute.attributeID, header)
           .then(response => {
             this.getProducts()
-            this.close()
+            this.addAt = false
           })
           .catch(error => {
             console.log(error)
           })
       }
-      */
     }
   }
 </script>
