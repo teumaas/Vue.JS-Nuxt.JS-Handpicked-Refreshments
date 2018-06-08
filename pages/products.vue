@@ -77,6 +77,35 @@
       </v-card>
     </v-dialog>
 
+        <v-dialog v-model="addAt" persistent max-width="290px">
+      <v-card>
+        <v-card-title class="headline">Attributen toevoegen aan + {{ item.name }} </v-card-title>
+        <v-card-text>Selecteer een attribuut die u wil toevoegen</v-card-text>
+        <v-card-actions>
+          <v-spacer>
+            <v-flex xs12>
+                  <v-select 
+                    v-model="value"
+                    track-by="name" 
+                    label="Attribuut" 
+                    placeholder="Voeg attributen toe" 
+                    :itemsAt = "attributes"
+                    :options="options" 
+                    :searchable="true" 
+                    :allow-empty="true"
+                    :multiple="false"
+                    :close-on-select="false"
+                    :hide-selected="true">
+                    <template slot="tag" slot-scope="props">{{ props.option.name }}</template>
+                  </v-select>
+                </v-flex>
+          </v-spacer>
+          <v-btn color="blue darken-1" flat @click.native="addAt = false">Annuleren</v-btn>
+          <!--<v-btn color="blue darken-1" flat @click.native="addAttribute(item, props.selected)">Bevestigen</v-btn>-->
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <v-card-title>
       <v-flex style="margin-top: 15px;" xs12 sm6 text-xs-left>
         <v-btn color="primary" @click="createItem()">Nieuw product <v-icon dark> add</v-icon></v-btn>
@@ -102,6 +131,9 @@
             <v-btn icon class="mx-0" dark @click="deleteItem(props.item)">
               <v-icon color="red">delete</v-icon>
             </v-btn>
+            <v-btn icon class="mx-0" @click="attributeItem(props.item)">
+              <v-icon dark>add</v-icon>
+            </v-btn>
           </td>
         </template>
         <template slot="no-data">
@@ -126,9 +158,11 @@
       editD: false,
       deleteD: false,
       imageD: false,
+      addAt: false,
       search: '',
       loading: true,
       refreshBtn: false,
+      value: null,
       headers: [
         {
           align: 'center',
@@ -151,6 +185,11 @@
         productID: 0,
         name: '',
         imageURL: ''
+      },
+      attributes: [],
+      itemA: {
+        attributeID: 0,
+        name: ''
       }
     }),
 
@@ -173,12 +212,17 @@
 
       imageD (val) {
         val || this.close()
+      },
+
+      addAt (val) {
+        val || this.close()
       }
     },
 
     /* Here the DataTable will be loaded */
     created () {
       this.getProducts()
+      this.getAttributes()
     },
 
     methods: {
@@ -205,6 +249,12 @@
         this.imageD = true
       },
 
+      attributeItem (item) {
+        this.itemIndex = this.product.indexOf(item)
+        this.item = Object.assign({}, item)
+        this.addAt = true
+      },
+
       close () {
         this.createD = false
         this.imageD = false
@@ -226,6 +276,10 @@
 
       deleteP (item) {
         this.deleteProduct(item)
+      },
+
+      attributeP (item, attribute) {
+        this.addAttribute(item, attribute)
       },
 
       /* API Logic for CRUD Functions. */
@@ -291,7 +345,37 @@
           .catch(error => {
             console.log(error)
           })
+      },
+
+      getAttributes () {
+        this.loading = true
+        this.refreshBtn = false
+        axios.get('https://handpicked-refreshments.herokuapp.com/api/product/attribute/all')
+          .then(response => {
+            this.attributes = response.data
+            this.loading = false
+          })
+          .catch(error => {
+            console.log(error)
+            this.refreshBtn = false
+          })
       }
+      /*,
+      addAttribute (item, attribute) {
+        const header = {
+          ContentType: 'application/x-www-form-urlencoded',
+          Accept: 'application/json'
+        }
+        axios.post('https://handpicked-refreshments.herokuapp.com/api/product/' + item.productID + '/attribute/' + attribute.attributeID, header)
+          .then(response => {
+            this.getProducts()
+            this.close()
+          })
+          .catch(error => {
+            console.log(error)
+          })
+      }
+      */
     }
   }
 </script>
