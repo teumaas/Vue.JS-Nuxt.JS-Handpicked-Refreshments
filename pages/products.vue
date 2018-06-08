@@ -14,6 +14,21 @@
                 <v-flex xs12>
                   <v-text-field v-model="item.imageURL" label="Afbeelding"></v-text-field>
                 </v-flex>
+                <v-flex xs12>
+                  <v-select 
+                    v-model="value"
+                    track-by="name" 
+                    label="Attribuut" 
+                    placeholder="Voeg attributen toe" 
+                    :options="options" 
+                    :searchable="true" 
+                    :allow-empty="true"
+                    :multiple="true"
+                    :close-on-select="false"
+                    :hide-selected="true">
+                    <template slot="tag" slot-scope="props">{{ props.option.name }}</template>
+                  </v-select>
+                </v-flex>
               </v-layout>
             </v-container>
           </v-card-text>
@@ -38,6 +53,18 @@
                 </v-flex>
                 <v-flex xs12>
                   <v-text-field v-model="item.imageURL" label="Afbeelding"></v-text-field>
+                </v-flex>
+                <v-flex xs12>
+                  <v-select 
+                    v-model="value"
+                    label="Attribuut" 
+                    placeholder="Voeg attributen toe" 
+                    item-value="name"
+                    :items="items" 
+                    :allow-empty="true"
+                    :multiple="true"
+                    :close-on-select="false">
+                  </v-select>
                 </v-flex>
               </v-layout>
             </v-container>
@@ -95,6 +122,7 @@
               <img :src="props.item.imageURL" @click="imageItem(props.item)">    
             </v-avatar>
           </td>
+          <td class="text-xs-left">{{ props.item.attributeID }}</td>
           <td class="justify-left layout px-0">
             <v-btn icon class="mx-0" @click="editItem(props.item)">
               <v-icon color="teal">edit</v-icon>
@@ -129,6 +157,15 @@
       search: '',
       loading: true,
       refreshBtn: false,
+      items: [
+        { name: 'Tablet 1' },
+        { name: 'Tablet 2' },
+        { name: 'Tablet 3' },
+        { name: 'Tablet 3' },
+        { name: 'Tablet 3' },
+        { name: 'Tablet 3' }
+      ],
+      value: null,
       headers: [
         {
           align: 'center',
@@ -138,6 +175,7 @@
         { text: 'Product ID', value: 'productID' },
         { text: 'Naam', value: 'name' },
         { text: 'Afbeelding', value: 'imageURL' },
+        { text: 'Attributen', value: 'attributeID' },
         { text: 'Acties', value: 'name', sortable: false }
       ],
       products: [],
