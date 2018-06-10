@@ -9,17 +9,20 @@
             <v-container grid-list-md>
               <v-layout wrap>
                 <v-flex xs12>
-                  <v-text-field v-model="item.name" label="Naam"></v-text-field>
+                  <v-text-field v-model="item.name" label="Naam" required></v-text-field>
                 </v-flex>
                 <v-flex xs12>
-                  <v-select :items="categories" v-model="item.category" label="Categorie" ></v-select>
+                  <v-select :items="categories" v-model="item.category" label="Categorie" required></v-select>
+                </v-flex>
+                <v-flex xs12>
+                  <v-select :items="attributes" v-model="item.attribute" label="Attributen" multiple chips persistent-hint></v-select>
                 </v-flex>
                 <v-flex xs12>
                   <v-text-field style="display: none;" v-model="item.imageURL" label="Afbeelding"></v-text-field>
                 </v-flex>
                 <v-flex xs6>
-                  <v-text-field label="Selecteer afbeelding" @click='pickFile' v-model='imageName'> </v-text-field>
-                  <input type="file" style="display: none" ref="image" accept="image/*" @change="onFilePicked">
+                  <v-text-field label="Selecteer afbeelding" @click='pickFile' v-model='imageName' required> </v-text-field>
+                  <input type="file" style="display: none" ref="image" accept="image/*" @change="onFilePicked" required>
                 </v-flex>
                 <v-flex class="text-xs-center" xs6>
                   <img :src="imageUrl" height="150" v-if="imageUrl"/>
@@ -48,6 +51,9 @@
                 </v-flex>
                 <v-flex xs12>
                   <v-select :items="categories" v-model="item.category" label="Categorie" ></v-select>
+                </v-flex>
+                <v-flex xs12>
+                  <v-select :items="attributes" v-model="attributesSelected" @select='onSelectAttribute(item)' label="Attributen" multiple chips persistent-hint>{{ attributesSelected }}</v-select>
                 </v-flex>
                 <v-flex xs12>
                   <v-text-field style="display: none;" v-model="item.imageURL" label="Afbeelding"></v-text-field>
@@ -169,6 +175,9 @@
       ],
       products: [],
       categories: [],
+      attributes: [],
+      attributesSelected: [],
+      attributesDefault: [],
       itemIndex: -1,
       item: {
         productID: 0,
@@ -216,15 +225,19 @@
       createItem () {
         this.createD = true
         this.getCategories()
+        this.getAttributes()
       },
 
       editItem (item) {
         this.itemIndex = this.products.indexOf(item)
         this.item = Object.assign({}, item)
         this.item.category = this.item.categoryID
+        console.log(this.attributes)
         this.editD = true
         this.imageUrl = this.item.imageURL
         this.getCategories()
+        this.getAttributes()
+        this.getAttributesByID(this.item.productID)
       },
 
       deleteItem (item) {
@@ -249,6 +262,8 @@
         this.saveBtn = true
         this.getProducts()
         setTimeout(() => {
+          this.attributes = []
+          this.attributesSelected = []
           this.item = Object.assign({}, this.defaultItem)
           this.itemIndex = -1
         }, 300)
@@ -256,6 +271,7 @@
 
       createP (item) {
         this.postProduct(item)
+        this.postAttributeToProduct(item)
       },
 
       updateP (item) {
@@ -264,6 +280,10 @@
 
       deleteP (item) {
         this.deleteProduct(item)
+      },
+
+      onSelectAttribute (item) {
+        this.postAttributeToProduct(item)
       },
 
       /* API Logic for CRUD Functions. */
@@ -293,6 +313,30 @@
           })
       },
 
+      getAttributesByID (item) {
+        axios.get('https://handpicked-refreshments.herokuapp.com/api/product/' + this.item.productID + '/attribute/')
+          .then(response => {
+            for (let i = 0; i < response.data.length; i++) {
+              this.attributesSelected.push({ value: response.data[i].attributeID, text: response.data[i].name })
+            }
+          })
+          .catch(error => {
+            console.log(error)
+          })
+      },
+
+      getAttributes () {
+        axios.get('https://handpicked-refreshments.herokuapp.com/api/product/attribute/all')
+          .then(response => {
+            for (let i = 0; i < response.data.length; i++) {
+              this.attributes.push({ value: response.data[i].attributeID, text: response.data[i].name })
+            }
+          })
+          .catch(error => {
+            console.log(error)
+          })
+      },
+
       postProduct (item) {
         const data = {
           name: item.name,
@@ -305,6 +349,22 @@
         }
 
         axios.post('https://handpicked-refreshments.herokuapp.com/api/product/', data, header)
+          .then(response => {
+            this.getProducts()
+            this.close()
+          })
+          .catch(error => {
+            console.log(error)
+          })
+      },
+
+      postAttributeToProduct (item) {
+        const header = {
+          ContentType: 'application/x-www-form-urlencoded',
+          Accept: 'application/json'
+        }
+
+        axios.post('https://handpicked-refreshments.herokuapp.com/api/product/' + item.productID + '/attribute/' + this.attributesSelected, header)
           .then(response => {
             this.getProducts()
             this.close()
