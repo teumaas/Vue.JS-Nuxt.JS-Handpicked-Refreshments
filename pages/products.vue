@@ -247,6 +247,7 @@
         this.imageName = null
         this.imageUrl = null
         this.saveBtn = true
+        this.getProducts()
         setTimeout(() => {
           this.item = Object.assign({}, this.defaultItem)
           this.itemIndex = -1
