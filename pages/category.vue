@@ -9,10 +9,17 @@
             <v-container grid-list-md>
               <v-layout wrap>
                 <v-flex xs12>
-                  <v-text-field v-model="item.name" label="Naam"></v-text-field>
+                  <v-text-field v-model="item.name" label="Naam" required></v-text-field>
                 </v-flex>
                 <v-flex xs12>
-                  <v-text-field v-model="item.imageURL" label="Afbeelding"></v-text-field>
+                  <v-text-field style="display: none;" v-model="item.imageURL" label="Afbeelding" required></v-text-field>
+                </v-flex>
+                <v-flex xs6>
+                  <v-text-field label="Selecteer afbeelding" @click='pickFile' v-model='imageName' required> </v-text-field>
+                  <input type="file" style="display: none" ref="image" accept="image/*" @change="onFilePicked" required>
+                </v-flex>
+                <v-flex class="text-xs-center" xs6>
+                  <img :src="imageUrl" height="150" v-if="imageUrl"/>
                 </v-flex>
               </v-layout>
             </v-container>
@@ -37,7 +44,14 @@
                   <v-text-field v-model="item.name" label="Naam"></v-text-field>
                 </v-flex>
                 <v-flex xs12>
-                  <v-text-field v-model="item.imageURL" label="Afbeelding"></v-text-field>
+                  <v-text-field style="display: none;" v-model="item.imageURL" label="Afbeelding"></v-text-field>
+                </v-flex>
+                <v-flex xs6>
+                  <v-text-field label="Selecteer afbeelding" @click='pickFile' v-model='imageName'> </v-text-field>
+                  <input type="file" style="display: none" ref="image" accept="image/*" @change="onFilePicked">
+                </v-flex>
+                <v-flex class="text-xs-center" xs6>
+                  <img :src="imageUrl" height="150" v-if="imageUrl"/>
                 </v-flex>
               </v-layout>
             </v-container>
@@ -129,6 +143,10 @@
       search: '',
       loading: true,
       refreshBtn: false,
+      saveBtn: true,
+      imageName: '',
+      imageUrl: '',
+      imageFile: '',
       headers: [
         {
           align: 'center',
@@ -210,6 +228,10 @@
         this.imageD = false
         this.editD = false
         this.deleteD = false
+        this.imageName = null
+        this.imageUrl = null
+        this.saveBtn = true
+        this.getCategories()
         setTimeout(() => {
           this.item = Object.assign({}, this.defaultItem)
           this.itemIndex = -1
@@ -287,6 +309,45 @@
           .then(response => {
             this.getCategories()
             this.close()
+          })
+          .catch(error => {
+            console.log(error)
+          })
+      },
+
+      pickFile () {
+        this.$refs.image.click()
+      },
+
+      onFilePicked (e) {
+        const files = e.target.files
+        if (files[0] !== undefined) {
+          this.imageName = files[0].name
+          if (this.imageName.lastIndexOf('.') <= 0) {
+            return
+          }
+          const fr = new FileReader()
+          fr.readAsDataURL(files[0])
+          fr.addEventListener('load', () => {
+            this.imageUrl = fr.result
+            this.imageFile = files[0]
+            /* Betere image afhandeling */
+            this.fileUpload()
+          })
+        } else {
+          this.imageName = ''
+          this.imageFile = ''
+          this.imageUrl = ''
+        }
+      },
+
+      fileUpload () {
+        const fd = new FormData()
+        fd.append('fileUpload', this.imageFile, this.imageFile.name)
+        axios.post('https://handpicked-refreshments.herokuapp.com/api/upload/', fd)
+          .then(response => {
+            this.item.imageURL = response.data
+            this.saveBtn = false
           })
           .catch(error => {
             console.log(error)
