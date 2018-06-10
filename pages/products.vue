@@ -12,7 +12,17 @@
                   <v-text-field v-model="item.name" label="Naam"></v-text-field>
                 </v-flex>
                 <v-flex xs12>
-                  <v-text-field v-model="item.imageURL" label="Afbeelding"></v-text-field>
+                  <v-select :items="categories" v-model="item.category" label="Categorie" ></v-select>
+                </v-flex>
+                <v-flex xs12>
+                  <v-text-field style="display: none;" v-model="item.imageURL" label="Afbeelding"></v-text-field>
+                </v-flex>
+                <v-flex xs6>
+                  <v-text-field label="Selecteer afbeelding" @click='pickFile' v-model='imageName'> </v-text-field>
+                  <input type="file" style="display: none" ref="image" accept="image/*" @change="onFilePicked">
+                </v-flex>
+                <v-flex class="text-xs-center" xs6>
+                  <img :src="imageUrl" height="150" v-if="imageUrl"/>
                 </v-flex>
               </v-layout>
             </v-container>
@@ -20,7 +30,7 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="blue darken-1" flat @click.native="createD = false">Annuleren</v-btn>
-            <v-btn color="blue darken-1" flat @click="createP(item)">Opslaan</v-btn>
+            <v-btn :disabled="saveBtn" color="blue darken-1" flat @click="createP(item)">Opslaan</v-btn>
           </v-card-actions>
         </v-card>
     </v-dialog>
@@ -37,7 +47,17 @@
                   <v-text-field v-model="item.name" label="Naam"></v-text-field>
                 </v-flex>
                 <v-flex xs12>
-                  <v-text-field v-model="item.imageURL" label="Afbeelding"></v-text-field>
+                  <v-select :items="categories" v-model="item.category" label="Categorie" ></v-select>
+                </v-flex>
+                <v-flex xs12>
+                  <v-text-field style="display: none;" v-model="item.imageURL" label="Afbeelding"></v-text-field>
+                </v-flex>
+                <v-flex xs6>
+                  <v-text-field label="Selecteer afbeelding" @click='pickFile' v-model='imageName'> </v-text-field>
+                  <input type="file" style="display: none" ref="image" accept="image/*" @change="onFilePicked">
+                </v-flex>
+                <v-flex class="text-xs-center" xs6>
+                  <img :src="imageUrl" height="150" v-if="imageUrl"/>
                 </v-flex>
               </v-layout>
             </v-container>
@@ -90,6 +110,7 @@
           <td class="text-xs-left"></td>
           <td class="text-xs-left">{{ props.item.productID }}</td>
           <td class="text-xs-left">{{ props.item.name }}</td>
+          <td class="text-xs-left">{{ props.item.categoryName }}</td>
           <td class="text-xs-left">
             <v-avatar class="justify-left">
               <img :src="props.item.imageURL" @click="imageItem(props.item)">    
@@ -129,6 +150,11 @@
       search: '',
       loading: true,
       refreshBtn: false,
+      saveBtn: true,
+      imageName: '',
+      imageUrl: '',
+      imageFile: '',
+      select: { text: 'Categorie' },
       headers: [
         {
           align: 'center',
@@ -137,20 +163,24 @@
         },
         { text: 'Product ID', value: 'productID' },
         { text: 'Naam', value: 'name' },
+        { text: 'Categorie', value: 'categoryName' },
         { text: 'Afbeelding', value: 'imageURL' },
         { text: 'Acties', value: 'name', sortable: false }
       ],
       products: [],
+      categories: [],
       itemIndex: -1,
       item: {
         productID: 0,
         name: '',
-        imageURL: ''
+        imageURL: '',
+        categoryName: ''
       },
       defaultItem: {
         productID: 0,
         name: '',
-        imageURL: ''
+        imageURL: '',
+        categoryName: ''
       }
     }),
 
@@ -185,12 +215,16 @@
       /* UI Logic for CRUD Functions. */
       createItem () {
         this.createD = true
+        this.getCategories()
       },
 
       editItem (item) {
         this.itemIndex = this.products.indexOf(item)
         this.item = Object.assign({}, item)
+        this.item.category = this.item.categoryID
         this.editD = true
+        this.imageUrl = this.item.imageURL
+        this.getCategories()
       },
 
       deleteItem (item) {
@@ -210,6 +244,9 @@
         this.imageD = false
         this.editD = false
         this.deleteD = false
+        this.imageName = null
+        this.imageUrl = null
+        this.saveBtn = true
         setTimeout(() => {
           this.item = Object.assign({}, this.defaultItem)
           this.itemIndex = -1
@@ -243,17 +280,30 @@
           })
       },
 
+      getCategories () {
+        axios.get('https://handpicked-refreshments.herokuapp.com/api/category/all')
+          .then(response => {
+            for (let i = 0; i < response.data.length; i++) {
+              this.categories.push({ value: response.data[i].categoryID, text: response.data[i].name })
+            }
+          })
+          .catch(error => {
+            console.log(error)
+          })
+      },
+
       postProduct (item) {
-        const querystring = require('querystring')
         const data = {
           name: item.name,
-          imageURL: item.imageURL
+          imageURL: item.imageURL,
+          categoryID: item.category
         }
         const header = {
           ContentType: 'application/x-www-form-urlencoded',
           Accept: 'application/json'
         }
-        axios.post('https://handpicked-refreshments.herokuapp.com/api/product/', querystring.stringify(data), header)
+
+        axios.post('https://handpicked-refreshments.herokuapp.com/api/product/', data, header)
           .then(response => {
             this.getProducts()
             this.close()
@@ -266,7 +316,8 @@
       updateProduct (item) {
         const data = {
           name: item.name,
-          imageURL: item.imageURL
+          imageURL: item.imageURL,
+          categoryID: item.category
         }
         const header = {
           ContentType: 'application/x-www-form-urlencoded',
@@ -287,6 +338,45 @@
           .then(response => {
             this.getProducts()
             this.close()
+          })
+          .catch(error => {
+            console.log(error)
+          })
+      },
+
+      pickFile () {
+        this.$refs.image.click()
+      },
+
+      onFilePicked (e) {
+        const files = e.target.files
+        if (files[0] !== undefined) {
+          this.imageName = files[0].name
+          if (this.imageName.lastIndexOf('.') <= 0) {
+            return
+          }
+          const fr = new FileReader()
+          fr.readAsDataURL(files[0])
+          fr.addEventListener('load', () => {
+            this.imageUrl = fr.result
+            this.imageFile = files[0]
+            /* Betere image afhandeling */
+            this.fileUpload()
+          })
+        } else {
+          this.imageName = ''
+          this.imageFile = ''
+          this.imageUrl = ''
+        }
+      },
+
+      fileUpload () {
+        const fd = new FormData()
+        fd.append('fileUpload', this.imageFile, this.imageFile.name)
+        axios.post('https://handpicked-refreshments.herokuapp.com/api/upload/', fd)
+          .then(response => {
+            this.item.imageURL = response.data
+            this.saveBtn = false
           })
           .catch(error => {
             console.log(error)
