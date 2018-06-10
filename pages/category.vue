@@ -203,12 +203,15 @@
       /* UI Logic for CRUD Functions. */
       createItem () {
         this.createD = true
+        this.getCategories()
       },
 
       editItem (item) {
         this.itemIndex = this.categories.indexOf(item)
         this.item = Object.assign({}, item)
         this.editD = true
+        this.imageUrl = this.item.imageURL
+        this.getCategories()
       },
 
       deleteItem (item) {
