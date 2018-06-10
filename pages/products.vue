@@ -9,17 +9,17 @@
             <v-container grid-list-md>
               <v-layout wrap>
                 <v-flex xs12>
-                  <v-text-field v-model="item.name" label="Naam"></v-text-field>
+                  <v-text-field v-model="item.name" label="Naam" required></v-text-field>
                 </v-flex>
                 <v-flex xs12>
-                  <v-select :items="categories" v-model="item.category" label="Categorie" ></v-select>
+                  <v-select :items="categories" v-model="item.category" label="Categorie" required></v-select>
                 </v-flex>
                 <v-flex xs12>
-                  <v-text-field style="display: none;" v-model="item.imageURL" label="Afbeelding"></v-text-field>
+                  <v-text-field style="display: none;" v-model="item.imageURL" label="Afbeelding" required></v-text-field>
                 </v-flex>
                 <v-flex xs6>
-                  <v-text-field label="Selecteer afbeelding" @click='pickFile' v-model='imageName'> </v-text-field>
-                  <input type="file" style="display: none" ref="image" accept="image/*" @change="onFilePicked">
+                  <v-text-field label="Selecteer afbeelding" @click='pickFile' v-model='imageName' required> </v-text-field>
+                  <input type="file" style="display: none" ref="image" accept="image/*" @change="onFilePicked" required>
                 </v-flex>
                 <v-flex class="text-xs-center" xs6>
                   <img :src="imageUrl" height="150" v-if="imageUrl"/>
@@ -44,13 +44,13 @@
             <v-container grid-list-md>
               <v-layout wrap>
                 <v-flex xs12>
-                  <v-text-field v-model="item.name" label="Naam"></v-text-field>
+                  <v-text-field v-model="item.name" label="Naam" required></v-text-field>
                 </v-flex>
                 <v-flex xs12>
-                  <v-select :items="categories" v-model="item.category" label="Categorie" ></v-select>
+                  <v-select :items="categories" v-model="item.category" label="Categorie" required></v-select>
                 </v-flex>
                 <v-flex xs12>
-                  <v-text-field style="display: none;" v-model="item.imageURL" label="Afbeelding"></v-text-field>
+                  <v-text-field style="display: none;" v-model="item.imageURL" label="Afbeelding" required></v-text-field>
                 </v-flex>
                 <v-flex xs6>
                   <v-text-field label="Selecteer afbeelding" @click='pickFile' v-model='imageName'> </v-text-field>
