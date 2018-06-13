@@ -47,8 +47,11 @@
         fixed: false,
         items: [
           { icon: 'apps', title: 'Welkom', to: '/' },
-          { icon: 'local_bar', title: 'Producten', to: '/products' },
-          { icon: 'meeting_room', title: 'Vergaderruimtes', to: '/rooms' }
+          { icon: 'local_cafe', title: 'Producten beheren', to: '/products' },
+          { icon: 'loyalty', title: 'Categorieën beheren', to: '/category' },
+          { icon: 'tablet_android', title: 'Tablets beheren', to: '/tablet' },
+          { icon: 'meeting_room', title: 'Vergaderruimtes beheren', to: '/rooms' },
+          { icon: 'plus_one', title: 'Attributen beheren', to: '/attributes' }
         ],
         miniVariant: false,
         right: true,

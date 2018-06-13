@@ -3,16 +3,13 @@
     <v-dialog v-model="createD" persistent max-width="500px">
         <v-card>
           <v-card-title>
-              <span class="headline">Product Toevoegen</span>
+              <span class="headline">Categorie toevoegen</span>
           </v-card-title>
           <v-card-text>
             <v-container grid-list-md>
               <v-layout wrap>
                 <v-flex xs12>
                   <v-text-field v-model="item.name" label="Naam" required></v-text-field>
-                </v-flex>
-                <v-flex xs12>
-                  <v-select :items="categories" v-model="item.category" label="Categorie" required></v-select>
                 </v-flex>
                 <v-flex xs12>
                   <v-text-field style="display: none;" v-model="item.imageURL" label="Afbeelding" required></v-text-field>
@@ -30,7 +27,7 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="blue darken-1" flat @click.native="createD = false">Annuleren</v-btn>
-            <v-btn :disabled="saveBtn" color="blue darken-1" flat @click="createP(item)">Opslaan</v-btn>
+            <v-btn color="blue darken-1" flat @click="createP(item)">Opslaan</v-btn>
           </v-card-actions>
         </v-card>
     </v-dialog>
@@ -38,19 +35,16 @@
     <v-dialog v-model="editD" persistent max-width="500px">
         <v-card>
           <v-card-title>
-              <span class="headline">Product Bewerken</span>
+              <span class="headline">Categorie bewerken</span>
           </v-card-title>
           <v-card-text>
             <v-container grid-list-md>
               <v-layout wrap>
                 <v-flex xs12>
-                  <v-text-field v-model="item.name" label="Naam" required></v-text-field>
+                  <v-text-field v-model="item.name" label="Naam"></v-text-field>
                 </v-flex>
                 <v-flex xs12>
-                  <v-select :items="categories" v-model="item.category" label="Categorie" required></v-select>
-                </v-flex>
-                <v-flex xs12>
-                  <v-text-field style="display: none;" v-model="item.imageURL" label="Afbeelding" required></v-text-field>
+                  <v-text-field style="display: none;" v-model="item.imageURL" label="Afbeelding"></v-text-field>
                 </v-flex>
                 <v-flex xs6>
                   <v-text-field label="Selecteer afbeelding" @click='pickFile' v-model='imageName'> </v-text-field>
@@ -72,8 +66,8 @@
 
     <v-dialog v-model="deleteD" persistent max-width="290px">
       <v-card>
-        <v-card-title class="headline">Product Verwijderen</v-card-title>
-        <v-card-text>Weet u zeker dat het geselecteerde product wilt verwijderen?</v-card-text>
+        <v-card-title class="headline">Categorie Verwijderen</v-card-title>
+        <v-card-text>Weet u zeker dat u de geselecteerde categorie wilt verwijderen?</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" flat @click.native="deleteD = false">Annuleren</v-btn>
@@ -99,24 +93,22 @@
 
     <v-card-title>
       <v-flex style="margin-top: 15px;" xs12 sm6 text-xs-left>
-        <v-btn color="primary" @click="createItem()">Nieuw product <v-icon dark> add</v-icon></v-btn>
+        <v-btn color="primary" @click="createItem()">Nieuwe categorie <v-icon dark> add</v-icon></v-btn>
       </v-flex>
       <v-spacer></v-spacer>
       <v-text-field v-model="search" append-icon="search" label="Zoeken..." single-line hide-details></v-text-field>
     </v-card-title>   
-    <v-data-table :loading="loading" :headers="headers" :items="products" :search="search" hide-actions class="elevation-1">
+    <v-data-table :loading="loading" :headers="headers" :items="categories" :search="search" hide-actions class="elevation-1">
       <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
         <template slot="items" slot-scope="props" >
           <td class="text-xs-left"></td>
-          <td class="text-xs-left">{{ props.item.productID }}</td>
+          <td class="text-xs-left">{{ props.item.categoryID }}</td>
           <td class="text-xs-left">{{ props.item.name }}</td>
-          <td class="text-xs-left">{{ props.item.categoryName }}</td>
           <td class="text-xs-left">
             <v-avatar class="justify-left">
               <img :src="props.item.imageURL" @click="imageItem(props.item)">    
             </v-avatar>
           </td>
-          <td class="text-xs-left">{{ props.item.attributeID }}</td>
           <td class="justify-left layout px-0">
             <v-btn icon class="mx-0" @click="editItem(props.item)">
               <v-icon color="teal">edit</v-icon>
@@ -128,7 +120,7 @@
         </template>
         <template slot="no-data">
           <div style="display: none;" class="text-md-center" :value="refreshBtn">
-            <v-btn round color="primary" @click="getProducts" ><v-icon>refresh</v-icon> Vernieuwen</v-btn>
+            <v-btn round color="primary" @click="getCategories" ><v-icon>refresh</v-icon> Vernieuwen</v-btn>
           </div>
         </template>
         <div class="text-md-center" slot="no-results" :value="true">
@@ -155,34 +147,28 @@
       imageName: '',
       imageUrl: '',
       imageFile: '',
-      select: { text: 'Categorie' },
       headers: [
         {
           align: 'center',
           sortable: false,
           value: 'name'
         },
-        { text: 'Product ID', value: 'productID' },
+        { text: 'Categorie ID', value: 'categoryID' },
         { text: 'Naam', value: 'name' },
-        { text: 'Categorie', value: 'categoryName' },
         { text: 'Afbeelding', value: 'imageURL' },
-        { text: 'Attributen', value: 'attributeID' },
         { text: 'Acties', value: 'name', sortable: false }
       ],
-      products: [],
       categories: [],
       itemIndex: -1,
       item: {
-        productID: 0,
+        categoryID: 0,
         name: '',
-        imageURL: '',
-        categoryName: ''
+        imageURL: ''
       },
       defaultItem: {
-        productID: 0,
+        categoryID: 0,
         name: '',
-        imageURL: '',
-        categoryName: ''
+        imageURL: ''
       }
     }),
 
@@ -210,7 +196,7 @@
 
     /* Here the DataTable will be loaded */
     created () {
-      this.getProducts()
+      this.getCategories()
     },
 
     methods: {
@@ -221,22 +207,21 @@
       },
 
       editItem (item) {
-        this.itemIndex = this.products.indexOf(item)
+        this.itemIndex = this.categories.indexOf(item)
         this.item = Object.assign({}, item)
-        this.item.category = this.item.categoryID
         this.editD = true
         this.imageUrl = this.item.imageURL
         this.getCategories()
       },
 
       deleteItem (item) {
-        this.itemIndex = this.products.indexOf(item)
+        this.itemIndex = this.categories.indexOf(item)
         this.item = Object.assign({}, item)
         this.deleteD = true
       },
 
       imageItem (item) {
-        this.itemIndex = this.products.indexOf(item)
+        this.itemIndex = this.categories.indexOf(item)
         this.item = Object.assign({}, item)
         this.imageD = true
       },
@@ -249,7 +234,7 @@
         this.imageName = null
         this.imageUrl = null
         this.saveBtn = true
-        this.getProducts()
+        this.getCategories()
         setTimeout(() => {
           this.item = Object.assign({}, this.defaultItem)
           this.itemIndex = -1
@@ -257,24 +242,24 @@
       },
 
       createP (item) {
-        this.postProduct(item)
+        this.postCategory(item)
       },
 
       updateP (item) {
-        this.updateProduct(item)
+        this.updateCategory(item)
       },
 
       deleteP (item) {
-        this.deleteProduct(item)
+        this.deleteCategory(item)
       },
 
       /* API Logic for CRUD Functions. */
-      getProducts () {
+      getCategories () {
         this.loading = true
         this.refreshBtn = false
-        axios.get('https://handpicked-refreshments.herokuapp.com/api/product/')
+        axios.get('https://handpicked-refreshments.herokuapp.com/api/category/all')
           .then(response => {
-            this.products = response.data
+            this.categories = response.data
             this.loading = false
           })
           .catch(error => {
@@ -283,32 +268,19 @@
           })
       },
 
-      getCategories () {
-        axios.get('https://handpicked-refreshments.herokuapp.com/api/category/all')
-          .then(response => {
-            for (let i = 0; i < response.data.length; i++) {
-              this.categories.push({ value: response.data[i].categoryID, text: response.data[i].name })
-            }
-          })
-          .catch(error => {
-            console.log(error)
-          })
-      },
-
-      postProduct (item) {
+      postCategory (item) {
+        const querystring = require('querystring')
         const data = {
           name: item.name,
-          imageURL: item.imageURL,
-          categoryID: item.category
+          imageURL: item.imageURL
         }
         const header = {
           ContentType: 'application/x-www-form-urlencoded',
           Accept: 'application/json'
         }
-
-        axios.post('https://handpicked-refreshments.herokuapp.com/api/product/', data, header)
+        axios.post('https://handpicked-refreshments.herokuapp.com/api/category/', querystring.stringify(data), header)
           .then(response => {
-            this.getProducts()
+            this.getCategories()
             this.close()
           })
           .catch(error => {
@@ -316,19 +288,18 @@
           })
       },
 
-      updateProduct (item) {
+      updateCategory (item) {
         const data = {
           name: item.name,
-          imageURL: item.imageURL,
-          categoryID: item.category
+          imageURL: item.imageURL
         }
         const header = {
           ContentType: 'application/x-www-form-urlencoded',
           Accept: 'application/json'
         }
-        axios.put('https://handpicked-refreshments.herokuapp.com/api/product/' + item.productID, data, header)
+        axios.put('https://handpicked-refreshments.herokuapp.com/api/category/' + item.categoryID, data, header)
           .then(response => {
-            this.getProducts()
+            this.getCategories()
             this.close()
           })
           .catch(error => {
@@ -336,10 +307,10 @@
           })
       },
 
-      deleteProduct (item) {
-        axios.delete('https://handpicked-refreshments.herokuapp.com/api/product/' + item.productID)
+      deleteCategory (item) {
+        axios.delete('https://handpicked-refreshments.herokuapp.com/api/category/' + item.categoryID)
           .then(response => {
-            this.getProducts()
+            this.getCategories()
             this.close()
           })
           .catch(error => {
