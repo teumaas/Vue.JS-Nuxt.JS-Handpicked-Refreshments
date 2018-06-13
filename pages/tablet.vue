@@ -13,7 +13,7 @@
     </v-dialog>
 
     <v-card-title>
-      <v-spacer></v-spacer>
+      <v-spacer></v-spacer><v-spacer></v-spacer>
       <v-text-field v-model="search" append-icon="search" label="Zoeken..." single-line hide-details></v-text-field>
     </v-card-title>   
     <v-data-table :loading="loading" :headers="headers" :items="tablets" :search="search" hide-actions class="elevation-1">
@@ -21,6 +21,7 @@
         <template slot="items" slot-scope="props" >
           <td class="text-xs-left"></td>
           <td class="text-xs-left">{{ props.item.tabletID }}</td>
+          <td class="text-xs-left">{{ props.item.tabletName }}</td>
           <td class="text-xs-left">{{ props.item.hardwareID }}</td>
           <td class="justify-left layout px-0">
             <v-btn icon class="mx-0" dark @click="deleteItem(props.item)">
@@ -57,6 +58,7 @@
           value: 'name'
         },
         { text: 'Tablet ID', value: 'tabletID' },
+        { text: 'Naam', value: 'tabletName' },
         { text: 'Hardware ID', value: 'hardwareID' },
         { text: 'Acties', value: 'name', sortable: false }
       ],
@@ -64,10 +66,12 @@
       itemIndex: -1,
       item: {
         tabletID: 0,
+        tabletName: '',
         hardwareID: ''
       },
       defaultItem: {
         tabletID: 0,
+        tabletName: '',
         hardwareID: ''
       }
     }),
