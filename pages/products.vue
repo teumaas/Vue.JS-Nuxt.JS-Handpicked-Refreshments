@@ -179,6 +179,7 @@
       attributesSelected: [],
       attributesTemp: [],
       attributesNewTemp: [],
+      attributesSelectedTemp: [],
       itemIndex: -1,
       item: {
         productID: 0,
@@ -238,11 +239,12 @@
         this.getCategories()
         this.getAttributesByID(this.item.productID, this.getAttributes)
         setTimeout(() => {
+          this.attributesSelectedTemp = this.attributesSelected
           this.attributesTemp = this.attributesSelected
           for (let i = 0; i < this.attributesTemp.length; i++) {
             this.attributesNewTemp.push(this.attributesTemp[i].value)
           }
-        }, 300)
+        }, 400)
       },
 
       deleteItem (item) {
@@ -267,8 +269,6 @@
         this.saveBtn = true
         this.getProducts()
         setTimeout(() => {
-          this.attributes = []
-          this.attributesSelected = []
           this.item = Object.assign({}, this.defaultItem)
           this.itemIndex = -1
         }, 300)
@@ -279,9 +279,14 @@
       },
 
       updateP (item) {
-        this.deleteAttributeToProduct(item)
         this.postAttributeToProduct(item)
+        this.deleteAttributeToProduct(item)
         this.updateProduct(item)
+        setTimeout(() => {
+          this.attributesSelected = []
+          this.attributesTemp = []
+          this.attributesNewTemp = []
+        }, 300)
       },
 
       deleteP (item) {
@@ -363,7 +368,7 @@
 
       postAttributeToProduct (item) {
         setTimeout(() => {
-          let itemsToPost = this.comparePost(this.attributesSelected, this.attributesTemp)
+          let itemsToPost = this.comparePost(this.attributesSelectedTemp, this.attributesTemp)
           for (let i = 0; i < itemsToPost.length; i++) {
             const header = {
               ContentType: 'application/x-www-form-urlencoded',
@@ -371,31 +376,31 @@
             }
             axios.post('https://handpicked-refreshments.herokuapp.com/api/product/' + item.productID + '/attribute/' + itemsToPost[i], header)
               .then(response => {
+                this.attributesSelected = []
               })
               .catch(error => {
                 console.log(error)
               })
           }
-          this.attributesTemp = []
         }, 300)
       },
 
       deleteAttributeToProduct (item) {
         setTimeout(() => {
-          let itemsToPost = this.compareDelete(this.attributesSelected, this.attributesNewTemp)
-          for (let i = 0; i < itemsToPost.length; i++) {
+          let itemsToDelete = this.compareDelete(this.attributesSelectedTemp, this.attributesNewTemp)
+          for (let i = 0; i < itemsToDelete.length; i++) {
             const header = {
               ContentType: 'application/x-www-form-urlencoded',
               Accept: 'application/json'
             }
-            axios.delete('https://handpicked-refreshments.herokuapp.com/api/product/' + item.productID + '/attribute/' + itemsToPost[i], header)
+            axios.delete('https://handpicked-refreshments.herokuapp.com/api/product/' + item.productID + '/attribute/' + itemsToDelete[i], header)
               .then(response => {
+                this.attributesSelected = []
               })
               .catch(error => {
                 console.log(error)
               })
           }
-          this.attributesNewTemp = []
         }, 300)
       },
 
