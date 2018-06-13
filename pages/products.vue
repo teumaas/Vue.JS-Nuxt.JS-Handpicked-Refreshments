@@ -53,7 +53,7 @@
                   <v-select :items="categories" v-model="item.category" label="Categorie" ></v-select>
                 </v-flex>
                 <v-flex xs12>
-                  <v-select :items="attributes" v-model="attributesSelected" @select='onSelectAttribute(item)' label="Attributen" multiple chips persistent-hint>{{ attributesSelected }}</v-select>
+                  <v-select :items="attributes" v-model="attributesSelected" label="Attributen" multiple chips persistent-hint>{{ attributesSelected }}</v-select>
                 </v-flex>
                 <v-flex xs12>
                   <v-text-field style="display: none;" v-model="item.imageURL" label="Afbeelding"></v-text-field>
@@ -177,7 +177,8 @@
       categories: [],
       attributes: [],
       attributesSelected: [],
-      attributesDefault: [],
+      attributesTemp: [],
+      attributesNewTemp: [],
       itemIndex: -1,
       item: {
         productID: 0,
@@ -232,12 +233,16 @@
         this.itemIndex = this.products.indexOf(item)
         this.item = Object.assign({}, item)
         this.item.category = this.item.categoryID
-        console.log(this.attributes)
         this.editD = true
         this.imageUrl = this.item.imageURL
         this.getCategories()
-        this.getAttributes()
-        this.getAttributesByID(this.item.productID)
+        this.getAttributesByID(this.item.productID, this.getAttributes)
+        setTimeout(() => {
+          this.attributesTemp = this.attributesSelected
+          for (let i = 0; i < this.attributesTemp.length; i++) {
+            this.attributesNewTemp.push(this.attributesTemp[i].value)
+          }
+        }, 300)
       },
 
       deleteItem (item) {
@@ -271,19 +276,16 @@
 
       createP (item) {
         this.postProduct(item)
-        this.postAttributeToProduct(item)
       },
 
       updateP (item) {
         this.updateProduct(item)
+        this.deleteAttributeToProduct(item)
+        this.postAttributeToProduct(item)
       },
 
       deleteP (item) {
         this.deleteProduct(item)
-      },
-
-      onSelectAttribute (item) {
-        this.postAttributeToProduct(item)
       },
 
       /* API Logic for CRUD Functions. */
@@ -313,18 +315,6 @@
           })
       },
 
-      getAttributesByID (item) {
-        axios.get('https://handpicked-refreshments.herokuapp.com/api/product/' + this.item.productID + '/attribute/')
-          .then(response => {
-            for (let i = 0; i < response.data.length; i++) {
-              this.attributesSelected.push({ value: response.data[i].attributeID, text: response.data[i].name })
-            }
-          })
-          .catch(error => {
-            console.log(error)
-          })
-      },
-
       getAttributes () {
         axios.get('https://handpicked-refreshments.herokuapp.com/api/product/attribute/all')
           .then(response => {
@@ -335,6 +325,19 @@
           .catch(error => {
             console.log(error)
           })
+      },
+
+      getAttributesByID (item, callback) {
+        axios.get('https://handpicked-refreshments.herokuapp.com/api/product/' + this.item.productID + '/attribute/')
+          .then(response => {
+            for (let i = 0; i < response.data.length; i++) {
+              this.attributesSelected.push({ value: response.data[i].attributeID, text: response.data[i].name })
+            }
+          })
+          .catch(error => {
+            console.log(error)
+          })
+        callback()
       },
 
       postProduct (item) {
@@ -359,19 +362,79 @@
       },
 
       postAttributeToProduct (item) {
-        const header = {
-          ContentType: 'application/x-www-form-urlencoded',
-          Accept: 'application/json'
-        }
+        setTimeout(() => {
+          let itemsToPost = this.comparePost(this.attributesSelected, this.attributesTemp)
+          for (let i = 0; i < itemsToPost.length; i++) {
+            const header = {
+              ContentType: 'application/x-www-form-urlencoded',
+              Accept: 'application/json'
+            }
+            axios.post('https://handpicked-refreshments.herokuapp.com/api/product/' + item.productID + '/attribute/' + itemsToPost[i], header)
+              .then(response => {
+                this.getProducts()
+                this.close()
+              })
+              .catch(error => {
+                console.log(error)
+              })
+          }
+          this.attributesTemp = []
+        }, 300)
+      },
 
-        axios.post('https://handpicked-refreshments.herokuapp.com/api/product/' + item.productID + '/attribute/' + this.attributesSelected, header)
-          .then(response => {
-            this.getProducts()
-            this.close()
-          })
-          .catch(error => {
-            console.log(error)
-          })
+      deleteAttributeToProduct (item) {
+        setTimeout(() => {
+          let itemsToPost = this.compareDelete(this.attributesSelected, this.attributesNewTemp)
+          for (let i = 0; i < itemsToPost.length; i++) {
+            const header = {
+              ContentType: 'application/x-www-form-urlencoded',
+              Accept: 'application/json'
+            }
+            axios.delete('https://handpicked-refreshments.herokuapp.com/api/product/' + item.productID + '/attribute/' + itemsToPost[i], header)
+              .then(response => {
+                this.getProducts()
+                this.close()
+              })
+              .catch(error => {
+                console.log(error)
+              })
+          }
+          this.attributesNewTemp = []
+        }, 300)
+      },
+
+      compareDelete (a1, a2) {
+        var result = []
+        for (var i = 0; i < a1.length; i++) {
+          if (a2.indexOf(a1[i]) === -1) {
+            result.push(a1[i])
+          }
+        }
+        for (i = 0; i < a2.length; i++) {
+          if (a1.indexOf(a2[i]) === -1) {
+            result.push(a2[i])
+          }
+        }
+        console.log('To delete: ' + result)
+        return result
+      },
+
+      comparePost (arr1, arr2) {
+        let unique = []
+        for (var i = 0; i < arr1.length; i++) {
+          var found = false
+          for (var j = 0; j < arr2.length; j++) {
+            if (arr1[i] === arr2[j]) {
+              found = true
+              break
+            }
+          }
+          if (found === false) {
+            unique.push(arr1[i])
+          }
+        }
+        console.log('To post: ' + unique)
+        return unique
       },
 
       updateProduct (item) {
