@@ -279,9 +279,9 @@
       },
 
       updateP (item) {
-        this.updateProduct(item)
         this.deleteAttributeToProduct(item)
         this.postAttributeToProduct(item)
+        this.updateProduct(item)
       },
 
       deleteP (item) {
@@ -371,8 +371,6 @@
             }
             axios.post('https://handpicked-refreshments.herokuapp.com/api/product/' + item.productID + '/attribute/' + itemsToPost[i], header)
               .then(response => {
-                this.getProducts()
-                this.close()
               })
               .catch(error => {
                 console.log(error)
@@ -392,8 +390,6 @@
             }
             axios.delete('https://handpicked-refreshments.herokuapp.com/api/product/' + item.productID + '/attribute/' + itemsToPost[i], header)
               .then(response => {
-                this.getProducts()
-                this.close()
               })
               .catch(error => {
                 console.log(error)
