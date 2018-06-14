@@ -15,7 +15,9 @@ import {
   VTextField,
   VAlert,
   VAvatar,
-  VProgressLinear
+  VProgressLinear,
+  VTimePicker,
+  VSelect
 } from 'vuetify'
 
 Vue.use(Vuetify, {
@@ -34,6 +36,8 @@ Vue.use(Vuetify, {
     VTextField,
     VAlert,
     VAvatar,
-    VProgressLinear
+    VProgressLinear,
+    VTimePicker,
+    VSelect
   }
 })
