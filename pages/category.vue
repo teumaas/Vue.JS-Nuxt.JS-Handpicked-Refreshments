@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-dialog v-model="createD" persistent max-width="500px">
+    <v-dialog v-model="createD" persistent max-width="600px">
         <v-card>
           <v-card-title>
               <span class="headline">Categorie toevoegen</span>
@@ -10,6 +10,32 @@
               <v-layout wrap>
                 <v-flex xs12>
                   <v-text-field v-model="item.name" label="Naam" required></v-text-field>
+                </v-flex>
+                <v-flex xs12 sm6 md6>
+                  <v-select :items="days" v-model="item.beginDay" label="Start beschikbaarheid"></v-select>
+                </v-flex>
+                <v-flex xs12 sm6 md6>
+                  <v-dialog ref="cModalBeginTime" v-model="cModalBeginTime" :return-value.sync="item.beginTime" persistent lazy full-width width="290px">
+                    <v-text-field slot="activator" v-model="item.beginTime" label="Starttijd beschikbaarheid" readonly></v-text-field>
+                    <v-time-picker format="24hr" v-model="item.beginTime" actions>
+                      <v-spacer></v-spacer>
+                      <v-btn flat color="primary" @click="cModalBeginTime = false">Annuleren</v-btn>
+                      <v-btn flat color="primary" @click="$refs.cModalBeginTime.save(item.beginTime)">Opslaan</v-btn>
+                    </v-time-picker>
+                  </v-dialog>
+                </v-flex>
+                <v-flex xs12 sm6 md6>
+                  <v-select :items="days" v-model="item.endDay" label="Einde beschikbaarheid"></v-select>
+                </v-flex>
+                <v-flex xs12 sm6 md6>
+                  <v-dialog ref="cModalEndTime" v-model="cModalEndTime" :return-value.sync="item.endTime" persistent lazy full-width width="290px">
+                    <v-text-field slot="activator" v-model="item.endTime" label="Einde beschikbaarheid" readonly></v-text-field>
+                    <v-time-picker format="24hr" v-model="item.endTime" actions>
+                      <v-spacer></v-spacer>
+                      <v-btn flat color="primary" @click="cModalEndTime = false">Annuleren</v-btn>
+                      <v-btn flat color="primary" @click="$refs.cModalEndTime.save(item.endTime)">Opslaan</v-btn>
+                    </v-time-picker>
+                  </v-dialog>
                 </v-flex>
                 <v-flex xs12>
                   <v-text-field style="display: none;" v-model="item.imageURL" label="Afbeelding" required></v-text-field>
@@ -26,13 +52,18 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" flat @click.native="createD = false">Annuleren</v-btn>
-            <v-btn color="blue darken-1" flat @click="createP(item)">Opslaan</v-btn>
+            <v-flex xs12 sm9 md9>
+              <v-btn color="blue darken-1" flat @click="removeAvailability(item)">Beschikbaarheid verwijeren</v-btn>
+            </v-flex>
+            <v-flex xs12 sm6 md6>
+              <v-btn color="blue darken-1" flat @click.native="createD = false">Annuleren</v-btn>
+              <v-btn color="blue darken-1" flat @click="createP(item)">Opslaan</v-btn>
+            </v-flex>
           </v-card-actions>
         </v-card>
     </v-dialog>
 
-    <v-dialog v-model="editD" persistent max-width="500px">
+    <v-dialog v-model="editD" persistent max-width="600px">
         <v-card>
           <v-card-title>
               <span class="headline">Categorie bewerken</span>
@@ -42,6 +73,32 @@
               <v-layout wrap>
                 <v-flex xs12>
                   <v-text-field v-model="item.name" label="Naam"></v-text-field>
+                </v-flex>
+                <v-flex xs12 sm6 md6>
+                  <v-select :items="days" v-model="item.beginDay" label="Start beschikbaarheid"></v-select>
+                </v-flex>
+                <v-flex xs12 sm6 md6>
+                  <v-dialog ref="eModalBeginTime" v-model="eModalBeginTime" :return-value.sync="item.beginTime" persistent lazy full-width width="290px">
+                    <v-text-field slot="activator" v-model="item.beginTime" label="Starttijd beschikbaarheid"></v-text-field>
+                    <v-time-picker format="24hr" v-model="item.beginTime" actions>
+                      <v-spacer></v-spacer>
+                      <v-btn flat color="primary" @click="eModalBeginTime = false">Annuleren</v-btn>
+                      <v-btn flat color="primary" @click="$refs.eModalBeginTime.save(item.beginTime)">Opslaan</v-btn>
+                    </v-time-picker>
+                  </v-dialog>
+                </v-flex>
+                <v-flex xs12 sm6 md6>
+                  <v-select :items="days" v-model="item.endDay" label="Einde beschikbaarheid"></v-select>
+                </v-flex>
+                <v-flex xs12 sm6 md6>
+                  <v-dialog ref="eModalEndTime" v-model="eModalEndTime" :return-value.sync="item.endTime" persistent lazy full-width width="290px">
+                    <v-text-field slot="activator" v-model="item.endTime" label="Einde beschikbaarheid"></v-text-field>
+                    <v-time-picker format="24hr" v-model="item.endTime" actions>
+                      <v-spacer></v-spacer>
+                      <v-btn flat color="primary" @click="eModalEndTime = false">Annuleren</v-btn>
+                      <v-btn flat color="primary" @click="$refs.eModalEndTime.save(item.endTime)">Opslaan</v-btn>
+                    </v-time-picker>
+                  </v-dialog>
                 </v-flex>
                 <v-flex xs12>
                   <v-text-field style="display: none;" v-model="item.imageURL" label="Afbeelding"></v-text-field>
@@ -58,8 +115,13 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" flat @click.native="editD = false">Annuleren</v-btn>
-            <v-btn color="blue darken-1" flat @click="updateP(item)">Opslaan</v-btn>
+            <v-flex xs12 sm9 md9>
+              <v-btn color="blue darken-1" flat @click="removeAvailability(item)">Beschikbaarheid verwijeren</v-btn>
+            </v-flex>
+            <v-flex xs12 sm6 md6>
+              <v-btn color="blue darken-1" flat @click.native="editD = false">Annuleren</v-btn>
+              <v-btn color="blue darken-1" flat @click="updateP(item)">Opslaan</v-btn>
+            </v-flex>
           </v-card-actions>
         </v-card>
     </v-dialog>
@@ -93,7 +155,7 @@
 
     <v-card-title>
       <v-flex style="margin-top: 15px;" xs12 sm6 text-xs-left>
-        <v-btn color="primary" @click="createItem()">Nieuwe categorie <v-icon dark> add</v-icon></v-btn>
+        <v-btn color="primary" @click="createItem(item)">Nieuwe categorie <v-icon dark> add</v-icon></v-btn>
       </v-flex>
       <v-spacer></v-spacer>
       <v-text-field v-model="search" append-icon="search" label="Zoeken..." single-line hide-details></v-text-field>
@@ -104,6 +166,8 @@
           <td class="text-xs-left"></td>
           <td class="text-xs-left">{{ props.item.categoryID }}</td>
           <td class="text-xs-left">{{ props.item.name }}</td>
+          <td class="text-xs-left">{{ formatTimeOrDay(formatNumberToDay(props.item.beginDay), formatNumberToDay(props.item.endDay)) }}</td>
+          <td class="text-xs-left">{{ formatTimeOrDay(props.item.beginTime, props.item.endTime) }}</td>
           <td class="text-xs-left">
             <v-avatar class="justify-left">
               <img :src="props.item.imageURL" @click="imageItem(props.item)">    
@@ -147,6 +211,10 @@
       imageName: '',
       imageUrl: '',
       imageFile: '',
+      cModalBeginTime: false,
+      cModalEndTime: false,
+      eModalBeginTime: false,
+      eModalEndTime: false,
       headers: [
         {
           align: 'center',
@@ -155,20 +223,40 @@
         },
         { text: 'Categorie ID', value: 'categoryID' },
         { text: 'Naam', value: 'name' },
+        { text: 'Beschikbaarheidsdagen', value: 'beginDay & endDay' },
+        { text: 'Beschikbaarheidstijden', value: 'beginTime & endTime' },
         { text: 'Afbeelding', value: 'imageURL' },
         { text: 'Acties', value: 'name', sortable: false }
+      ],
+      days: [
+        { text: 'Selecteer dag', value: null },
+        { text: 'Maandag', value: 0 },
+        { text: 'Dinsdag', value: 1 },
+        { text: 'Woensdag', value: 2 },
+        { text: 'Donderdag', value: 3 },
+        { text: 'Vrijdag', value: 4 },
+        { text: 'Zaterdag', value: 5 },
+        { text: 'Zondag', value: 6 }
       ],
       categories: [],
       itemIndex: -1,
       item: {
         categoryID: 0,
         name: '',
-        imageURL: ''
+        imageURL: '',
+        beginDay: null,
+        endDay: null,
+        beginTime: null,
+        endTime: null
       },
       defaultItem: {
         categoryID: 0,
         name: '',
-        imageURL: ''
+        imageURL: '',
+        beginDay: null,
+        endDay: null,
+        beginTime: null,
+        endTime: null
       }
     }),
 
@@ -201,7 +289,7 @@
 
     methods: {
       /* UI Logic for CRUD Functions. */
-      createItem () {
+      createItem (item) {
         this.createD = true
         this.getCategories()
       },
@@ -253,6 +341,13 @@
         this.deleteCategory(item)
       },
 
+      removeAvailability (item) {
+        item.beginDay = null
+        item.endDay = null
+        item.beginTime = null
+        item.endTime = null
+      },
+
       /* API Logic for CRUD Functions. */
       getCategories () {
         this.loading = true
@@ -268,17 +363,58 @@
           })
       },
 
+      formatNumberToDay (item) {
+        let dayParse = item
+        switch (dayParse) {
+          case 0:
+            dayParse = 'Maandag'
+            break
+          case 1:
+            dayParse = 'Dinsdag'
+            break
+          case 2:
+            dayParse = 'Woensdag'
+            break
+          case 3:
+            dayParse = 'Donderdag'
+            break
+          case 4:
+            dayParse = 'Vrijdag'
+            break
+          case 5:
+            dayParse = 'Zaterdag'
+            break
+          case 6:
+            dayParse = 'Zondag'
+            break
+        }
+        return dayParse
+      },
+
+      formatTimeOrDay (begin, end) {
+        let format = `${begin} / ${end}`
+        if (begin === null && end === null) {
+          format = ''
+        } else {
+          format = `${begin} t/m ${end}`
+        }
+        return format
+      },
+
       postCategory (item) {
-        const querystring = require('querystring')
         const data = {
           name: item.name,
-          imageURL: item.imageURL
+          imageURL: item.imageURL,
+          beginDay: item.beginDay,
+          beginTime: item.beginTime,
+          endDay: item.endDay,
+          endTime: item.endTime
         }
         const header = {
           ContentType: 'application/x-www-form-urlencoded',
           Accept: 'application/json'
         }
-        axios.post('https://handpicked-refreshments.herokuapp.com/api/category/', querystring.stringify(data), header)
+        axios.post('https://handpicked-refreshments.herokuapp.com/api/category/', data, header)
           .then(response => {
             this.getCategories()
             this.close()
@@ -291,7 +427,11 @@
       updateCategory (item) {
         const data = {
           name: item.name,
-          imageURL: item.imageURL
+          imageURL: item.imageURL,
+          beginDay: item.beginDay,
+          beginTime: item.beginTime,
+          endDay: item.endDay,
+          endTime: item.endTime
         }
         const header = {
           ContentType: 'application/x-www-form-urlencoded',
