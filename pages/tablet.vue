@@ -1,5 +1,27 @@
 <template>
   <div>
+    <v-dialog v-model="editD" persistent max-width="500px">
+        <v-card>
+          <v-card-title>
+              <span class="headline">Tablet Bewerken</span>
+          </v-card-title>
+          <v-card-text>
+            <v-container grid-list-md>
+              <v-layout wrap>
+                <v-flex xs12>
+                  <v-text-field v-model="item.tabletName" label="Naam" required></v-text-field>
+                </v-flex>
+              </v-layout>
+            </v-container>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="blue darken-1" flat @click.native="editD = false">Annuleren</v-btn>
+            <v-btn color="blue darken-1" flat @click="updateP(item)">Opslaan</v-btn>
+          </v-card-actions>
+        </v-card>
+    </v-dialog>
+
     <v-dialog v-model="deleteD" persistent max-width="290px">
       <v-card>
         <v-card-title class="headline">Tablet Verwijderen</v-card-title>
@@ -11,7 +33,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-// 
+ 
     <v-card-title>
       <v-spacer></v-spacer><v-spacer></v-spacer>
       <v-text-field v-model="search" append-icon="search" label="Zoeken..." single-line hide-details></v-text-field>
@@ -24,6 +46,9 @@
           <td class="text-xs-left">{{ props.item.tabletName }}</td>
           <td class="text-xs-left">{{ props.item.hardwareID }}</td>
           <td class="justify-left layout px-0">
+            <v-btn icon class="mx-0" @click="editItem(props.item)">
+              <v-icon color="teal">edit</v-icon>
+            </v-btn>
             <v-btn icon class="mx-0" dark @click="deleteItem(props.item)">
               <v-icon color="red">delete</v-icon>
             </v-btn>
@@ -47,6 +72,7 @@
   /* DataTable settings */
   export default {
     data: () => ({
+      editD: false,
       deleteD: false,
       search: '',
       loading: true,
@@ -81,6 +107,10 @@
 
     /* Add here new function for new dialog */
     watch: {
+      editD (val) {
+        val || this.close()
+      },
+
       deleteD (val) {
         val || this.close()
       }
@@ -93,6 +123,12 @@
 
     methods: {
       /* UI Logic for RD Functions. */
+      editItem (item) {
+        this.itemIndex = this.tablets.indexOf(item)
+        this.item = Object.assign({}, item)
+        this.editD = true
+      },
+
       deleteItem (item) {
         this.itemIndex = this.tablets.indexOf(item)
         this.item = Object.assign({}, item)
@@ -100,11 +136,16 @@
       },
 
       close () {
+        this.editD = false
         this.deleteD = false
         setTimeout(() => {
           this.item = Object.assign({}, this.defaultItem)
           this.itemIndex = -1
         }, 300)
+      },
+
+      updateP (item) {
+        this.updateTablet(item)
       },
 
       deleteP (item) {
@@ -123,6 +164,25 @@
           .catch(error => {
             console.log(error)
             this.refreshBtn = false
+          })
+      },
+
+      updateTablet (item) {
+        const data = {
+          name: item.tabletName,
+          hardwareID: item.hardwareID
+        }
+        const header = {
+          ContentType: 'application/x-www-form-urlencoded',
+          Accept: 'application/json'
+        }
+        axios.put('https://handpicked-refreshments.herokuapp.com/api/tablet', data, header)
+          .then(response => {
+            this.getTablets()
+            this.close()
+          })
+          .catch(error => {
+            console.log(error)
           })
       },
 

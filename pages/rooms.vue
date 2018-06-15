@@ -33,12 +33,12 @@
                   <v-flex xs12>
                     <v-text-field v-model="item.name" label="Naam" required></v-text-field>
                   </v-flex>
-                  <v-layout row>
+                  <v-layout>
                     <v-flex xs12>
                       <v-text-field v-model="item.hardwareID" label="Tablet" readonly></v-text-field>
                     </v-flex>
                     <v-flex>
-                      <v-btn icon class="mx-1" dark @click="deleteTabletItem()">
+                      <v-btn icon class="mx-0" dark @click="deleteTabletItem()">
                         <v-icon color="red" x-large>delete</v-icon>
                       </v-btn>
                     </v-flex>
@@ -245,7 +245,7 @@
         axios.get('https://handpicked-refreshments.herokuapp.com/api/tablet')
           .then(response => {
             for (let i = 0; i < response.data.length; i++) {
-              this.tablets.push({ value: response.data[i].tabletID, text: response.data[i].hardwareID })
+              this.tablets.push({ value: response.data[i].tabletID, text: response.data[i].tabletName })
             }
           })
           .catch(error => {
@@ -255,8 +255,7 @@
 
       postRoom (item) {
         const data = {
-          name: item.name,
-          tabletID: item.tabletName
+          name: item.name
         }
         const header = {
           ContentType: 'application/x-www-form-urlencoded',
@@ -274,8 +273,7 @@
 
       updateRoom (item) {
         const data = {
-          name: item.name,
-          tabletID: item.tabletName
+          name: item.name
         }
         const header = {
           ContentType: 'application/x-www-form-urlencoded',
@@ -304,9 +302,13 @@
 
       deleteTabletInRoom (item) {
         const data = {
-          tabletID: item.tabletID
+          hardwareID: item.hardwareID
         }
-        axios.delete('https://handpicked-refreshments.herokuapp.com/api/room/tablet/delete', data)
+        const header = {
+          ContentType: 'application/x-www-form-urlencoded',
+          Accept: 'application/json'
+        }
+        axios.delete('https://handpicked-refreshments.herokuapp.com/api/room/tablet/delete', data, header)
           .then(response => {
             this.getRooms()
             this.close()
