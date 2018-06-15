@@ -33,7 +33,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-
+// 
     <v-card-title>
       <v-spacer></v-spacer><v-spacer></v-spacer>
       <v-text-field v-model="search" append-icon="search" label="Zoeken..." single-line hide-details></v-text-field>
