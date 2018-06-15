@@ -33,31 +33,26 @@
                   <v-flex xs12>
                     <v-text-field v-model="item.name" label="Naam" required></v-text-field>
                   </v-flex>
-                  <v-layout>
-                    <v-flex xs12>
-                      <v-text-field v-model="item.hardwareID" label="Tablet" readonly></v-text-field>
-                    </v-flex>
-                    <v-flex>
-                      <v-btn icon class="mx-0" dark @click="deleteTabletItem()">
-                        <v-icon color="red" x-large>delete</v-icon>
-                      </v-btn>
-                    </v-flex>
-                  </v-layout>
                 </v-layout>
               </v-container>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" flat @click.native="editD = false">Annuleren</v-btn>
-            <v-btn color="blue darken-1" flat @click="updateP(item)">Opslaan</v-btn>
+            <v-flex xs12 sm9 md9>
+              <v-btn color="blue darken-1" :style="removeBtnDisplay" :disabled="removeBtn" flat @click="deleteTabletItem(item)">Tablet verwijderen</v-btn>
+            </v-flex>
+            <v-flex xs12 sm9 md9>
+              <v-btn color="blue darken-1" flat @click.native="editD = false">Annuleren</v-btn>
+              <v-btn color="blue darken-1" flat @click="updateP(item)">Opslaan</v-btn>
+            </v-flex>
           </v-card-actions>
         </v-card>
     </v-dialog>
 
-    <v-dialog v-model="deleteTabletD" persistent max-width="290px">
+    <v-dialog v-model="deleteTabletD" persistent max-width="450px">
       <v-card>
-        <v-card-title class="headline">Tablet in ... verwijderen</v-card-title>
-        <v-card-text>Weet u zeker dat u de tablet uit de vergaderruimte wilt verwijderen?</v-card-text>
+        <v-card-title class="headline">Tablet {{ item.tabletName }} uit {{ item.name }} verwijderen</v-card-title>
+        <v-card-text>Weet u zeker dat u de tablet {{ item.tabletName }} uit de vergaderruimte {{ item.name }} wilt verwijderen?</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" flat @click.native="deleteTabletD = false">Annuleren</v-btn>
@@ -126,6 +121,8 @@
       search: '',
       loading: true,
       refreshBtn: false,
+      removeBtn: false,
+      removeBtnDisplay: null,
       headers: [
         {
           align: 'center',
@@ -187,6 +184,10 @@
         this.itemIndex = this.rooms.indexOf(item)
         this.item = Object.assign({}, item)
         this.editD = true
+        if (item.hardwareID === null) {
+          this.removeBtn = true
+          this.removeBtnDisplay = 'display: none;'
+        }
       },
 
       deleteItem (item) {
@@ -195,7 +196,9 @@
         this.deleteD = true
       },
 
-      deleteTabletItem () {
+      deleteTabletItem (item) {
+        this.itemIndex = this.rooms.indexOf(item)
+        this.item = Object.assign({}, item)
         this.deleteTabletD = true
       },
 
@@ -207,6 +210,8 @@
         setTimeout(() => {
           this.item = Object.assign({}, this.defaultItem)
           this.itemIndex = -1
+          this.removeBtn = false
+          this.removeBtnDisplay = null
         }, 300)
       },
 
@@ -301,9 +306,7 @@
       },
 
       deleteTabletInRoom (item) {
-        const data = {
-          hardwareID: item.hardwareID
-        }
+        const data = { data: { hardwareID: item.hardwareID } }
         const header = {
           ContentType: 'application/x-www-form-urlencoded',
           Accept: 'application/json'
