@@ -136,6 +136,7 @@
       },
 
       close () {
+        this.editD = false
         this.deleteD = false
         setTimeout(() => {
           this.item = Object.assign({}, this.defaultItem)
@@ -168,13 +169,14 @@
 
       updateTablet (item) {
         const data = {
-          name: item.tabletName
+          name: item.tabletName,
+          hardwareID: item.hardwareID
         }
         const header = {
           ContentType: 'application/x-www-form-urlencoded',
           Accept: 'application/json'
         }
-        axios.put('https://handpicked-refreshments.herokuapp.com/api/tablet/' + item.tabletID, data, header)
+        axios.put('https://handpicked-refreshments.herokuapp.com/api/tablet', data, header)
           .then(response => {
             this.getTablets()
             this.close()
