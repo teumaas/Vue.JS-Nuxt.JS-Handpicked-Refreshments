@@ -16,6 +16,7 @@ import {
   VAlert,
   VAvatar,
   VProgressLinear,
+  VTimePicker,
   VSelect
 } from 'vuetify'
 
@@ -36,6 +37,7 @@ Vue.use(Vuetify, {
     VAlert,
     VAvatar,
     VProgressLinear,
+    VTimePicker,
     VSelect
   }
 })
