@@ -35,7 +35,7 @@
                   </v-flex>
                   <v-layout row>
                     <v-flex xs12>
-                      <v-text-field v-model="item.name" label="Tablet" readonly></v-text-field>
+                      <v-text-field v-model="item.hardwareID" label="Tablet" readonly></v-text-field>
                     </v-flex>
                     <v-flex>
                       <v-btn icon class="mx-1" dark @click="deleteTabletItem()">
@@ -143,12 +143,14 @@
       item: {
         meetingRoomID: 0,
         name: '',
-        tabletName: ''
+        tabletName: '',
+        hardwareID: ''
       },
       defaultItem: {
         meetingRoomID: 0,
         name: '',
-        tabletName: ''
+        tabletName: '',
+        hardwareID: ''
       }
     }),
 
@@ -243,7 +245,7 @@
         axios.get('https://handpicked-refreshments.herokuapp.com/api/tablet')
           .then(response => {
             for (let i = 0; i < response.data.length; i++) {
-              this.tablets.push({ value: response.data[i].tabletID, text: response.data[i].tabletName })
+              this.tablets.push({ value: response.data[i].tabletID, text: response.data[i].hardwareID })
             }
           })
           .catch(error => {
@@ -301,7 +303,10 @@
       },
 
       deleteTabletInRoom (item) {
-        axios.delete('https://handpicked-refreshments.herokuapp.com/api/room/tablet/delete')
+        const data = {
+          tabletID: item.tabletID
+        }
+        axios.delete('https://handpicked-refreshments.herokuapp.com/api/room/tablet/delete', data)
           .then(response => {
             this.getRooms()
             this.close()
