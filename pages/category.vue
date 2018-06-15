@@ -155,7 +155,7 @@
 
     <v-card-title>
       <v-flex style="margin-top: 15px;" xs12 sm6 text-xs-left>
-        <v-btn color="primary" @click="createItem()">Nieuwe categorie <v-icon dark> add</v-icon></v-btn>
+        <v-btn color="primary" @click="createItem(item)">Nieuwe categorie <v-icon dark> add</v-icon></v-btn>
       </v-flex>
       <v-spacer></v-spacer>
       <v-text-field v-model="search" append-icon="search" label="Zoeken..." single-line hide-details></v-text-field>
@@ -289,7 +289,7 @@
 
     methods: {
       /* UI Logic for CRUD Functions. */
-      createItem () {
+      createItem (item) {
         this.createD = true
       },
 
@@ -399,7 +399,6 @@
       },
 
       postCategory (item) {
-        const querystring = require('querystring')
         const data = {
           name: item.name,
           imageURL: item.imageURL,
@@ -408,12 +407,11 @@
           endDay: item.endDay,
           endTime: item.endTime
         }
-        console.log(data)
         const header = {
           ContentType: 'application/x-www-form-urlencoded',
           Accept: 'application/json'
         }
-        axios.post('https://handpicked-refreshments.herokuapp.com/api/category/', querystring.stringify(data), header)
+        axios.post('https://handpicked-refreshments.herokuapp.com/api/category/', data, header)
           .then(response => {
             this.getCategories()
             this.close()
@@ -432,7 +430,6 @@
           endDay: item.endDay,
           endTime: item.endTime
         }
-        console.log(data)
         const header = {
           ContentType: 'application/x-www-form-urlencoded',
           Accept: 'application/json'
