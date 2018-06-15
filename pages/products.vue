@@ -116,6 +116,7 @@
               <img :src="props.item.imageURL" @click="imageItem(props.item)">    
             </v-avatar>
           </td>
+          <td class="text-xs-left">{{ props.item.attributeID }}</td>
           <td class="justify-left layout px-0">
             <v-btn icon class="mx-0" @click="editItem(props.item)">
               <v-icon color="teal">edit</v-icon>
@@ -165,6 +166,7 @@
         { text: 'Naam', value: 'name' },
         { text: 'Categorie', value: 'categoryName' },
         { text: 'Afbeelding', value: 'imageURL' },
+        { text: 'Attributen', value: 'attributeID' },
         { text: 'Acties', value: 'name', sortable: false }
       ],
       products: [],

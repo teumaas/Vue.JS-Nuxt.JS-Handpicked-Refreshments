@@ -47,11 +47,11 @@
         fixed: false,
         items: [
           { icon: 'apps', title: 'Welkom', to: '/' },
-          { icon: 'local_cafe', title: 'Producten beheren', to: '/products' },
           { icon: 'loyalty', title: 'Categorieën beheren', to: '/category' },
-          { icon: 'tablet_android', title: 'Tablets beheren', to: '/tablet' },
+          { icon: 'local_cafe', title: 'Producten beheren', to: '/products' },
+          { icon: 'plus_one', title: 'Attributen beheren', to: '/attributes' },
           { icon: 'meeting_room', title: 'Vergaderruimtes beheren', to: '/rooms' },
-          { icon: 'plus_one', title: 'Attributen beheren', to: '/attributes' }
+          { icon: 'tablet_android', title: 'Tablets beheren', to: '/tablet' }
         ],
         miniVariant: false,
         right: true,
