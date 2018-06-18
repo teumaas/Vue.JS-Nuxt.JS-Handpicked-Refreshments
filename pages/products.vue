@@ -53,9 +53,6 @@
                   <v-select :items="categories" v-model="item.category" label="Categorie" ></v-select>
                 </v-flex>
                 <v-flex xs12>
-                  <v-select :items="attributes" v-model="attributesSelected" label="Attributen" multiple chips persistent-hint>{{ attributesSelected }}</v-select>
-                </v-flex>
-                <v-flex xs12>
                   <v-text-field style="display: none;" v-model="item.imageURL" label="Afbeelding"></v-text-field>
                 </v-flex>
                 <v-flex xs6>
@@ -103,7 +100,48 @@
       </v-card>
     </v-dialog>
 
+    <v-dialog v-model="attributeD" persistent max-width="500px">
+      <v-card>
+        <v-card-title>
+            <span class="headline">Attribuut toevoegen/verwijderen</span>
+        </v-card-title>
+        <v-card-text>
+          <v-data-table :style="tableStyle" :loading="loadingA" :items="attributesTable" hide-actions>
+            <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
+              <template slot="items" slot-scope="props" >
+                <td class="text-xs-left">{{ props.item.name }}</td>
+                <td class="justify-left layout px-0">
+                  <v-btn icon class="mx-0" dark @click="deleteAttributeToProduct(item, props.item.attributeID)">
+                    <v-icon color="red">delete</v-icon>
+                  </v-btn>
+                </td>
+              </template>
+              <template slot="no-data">
+                <div style="display: none;" class="text-md-center" :value="refreshBtn">
+                  <v-btn round color="primary" @click="getProducts" ><v-icon>refresh</v-icon> Vernieuwen</v-btn>
+                </div>
+              </template>
+          </v-data-table>
+          <v-container grid-list-md>
+            <v-layout wrap>
+              <v-select :items="attributes" v-model="item.attributes" label="Selecteer attribuut" autocomplete></v-select>
+            </v-layout>
+          </v-container>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-flex xs12 sm10 md10>
+            <v-btn color="blue darken-1" flat @click="postAttributeToProduct(item)">Geselecteerd attribuut toevoegen</v-btn>
+          </v-flex>
+          <v-flex xs12 sm3 md3>
+            <v-btn color="blue darken-1" flat @click.native="attributeD = false">Sluiten</v-btn>
+          </v-flex>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <v-card-title>
+      <v-snackbar color="error" timeout="6000" top="top" v-model="snackbar">Attribuut is al toegevoegd!<v-btn flat color="white" @click.native="snackbar = false">Close</v-btn></v-snackbar>
       <v-flex style="margin-top: 15px;" xs12 sm6 text-xs-left>
         <v-btn color="primary" @click="createItem()">Nieuw product <v-icon dark> add</v-icon></v-btn>
       </v-flex>
@@ -129,6 +167,9 @@
             <v-btn icon class="mx-0" dark @click="deleteItem(props.item)">
               <v-icon color="red">delete</v-icon>
             </v-btn>
+            <v-btn icon class="mx-0" dark @click="attributeItem(props.item)">
+              <v-icon color="blue">list_alt</v-icon>
+            </v-btn>
           </td>
         </template>
         <template slot="no-data">
@@ -153,13 +194,18 @@
       editD: false,
       deleteD: false,
       imageD: false,
+      attributeD: false,
       search: '',
       loading: true,
+      loadingA: true,
       refreshBtn: false,
       saveBtn: true,
       imageName: '',
       imageUrl: '',
       imageFile: '',
+      tableStyle: '',
+      snackbar: false,
+      idA: '',
       select: { text: 'Categorie' },
       headers: [
         {
@@ -176,10 +222,7 @@
       products: [],
       categories: [],
       attributes: [],
-      attributesSelected: [],
-      attributesTemp: [],
-      attributesNewTemp: [],
-      attributesSelectedTemp: [],
+      attributesTable: [],
       itemIndex: -1,
       item: {
         productID: 0,
@@ -214,6 +257,10 @@
 
       imageD (val) {
         val || this.close()
+      },
+
+      attributeD (val) {
+        val || this.close()
       }
     },
 
@@ -226,8 +273,6 @@
       /* UI Logic for CRUD Functions. */
       createItem () {
         this.createD = true
-        this.getCategories()
-        this.getAttributes()
       },
 
       editItem (item) {
@@ -237,20 +282,19 @@
         this.editD = true
         this.imageUrl = this.item.imageURL
         this.getCategories()
-        this.getAttributesByID(this.item.productID, this.getAttributes)
-        setTimeout(() => {
-          this.attributesSelectedTemp = this.attributesSelected
-          this.attributesTemp = this.attributesSelected
-          for (let i = 0; i < this.attributesTemp.length; i++) {
-            this.attributesNewTemp.push(this.attributesTemp[i].value)
-          }
-        }, 400)
       },
 
       deleteItem (item) {
         this.itemIndex = this.products.indexOf(item)
         this.item = Object.assign({}, item)
         this.deleteD = true
+      },
+
+      attributeItem (item) {
+        this.itemIndex = this.products.indexOf(item)
+        this.item = Object.assign({}, item)
+        this.attributeD = true
+        this.getAttributesByID(item, this.getAttributes)
       },
 
       imageItem (item) {
@@ -264,9 +308,11 @@
         this.imageD = false
         this.editD = false
         this.deleteD = false
+        this.attributeD = false
         this.imageName = null
         this.imageUrl = null
         this.saveBtn = true
+        this.attributesTable = []
         this.getProducts()
         setTimeout(() => {
           this.item = Object.assign({}, this.defaultItem)
@@ -279,14 +325,7 @@
       },
 
       updateP (item) {
-        this.postAttributeToProduct(item)
-        this.deleteAttributeToProduct(item)
         this.updateProduct(item)
-        setTimeout(() => {
-          this.attributesSelected = []
-          this.attributesTemp = []
-          this.attributesNewTemp = []
-        }, 300)
       },
 
       deleteP (item) {
@@ -333,14 +372,17 @@
       },
 
       getAttributesByID (item, callback) {
-        axios.get('https://handpicked-refreshments.herokuapp.com/api/product/' + this.item.productID + '/attribute/')
+        console.log(item.attributeID)
+        axios.get('https://handpicked-refreshments.herokuapp.com/api/product/' + item.productID + '/attribute/')
           .then(response => {
-            for (let i = 0; i < response.data.length; i++) {
-              this.attributesSelected.push({ value: response.data[i].attributeID, text: response.data[i].name })
-            }
+            this.tableStyle = 'margin-top: -70px;'
+            this.attributesTable = response.data
+            this.loadingA = false
           })
           .catch(error => {
             console.log(error)
+            this.tableStyle = 'display: none;'
+            this.loadingA = false
           })
         callback()
       },
@@ -367,75 +409,32 @@
       },
 
       postAttributeToProduct (item) {
-        setTimeout(() => {
-          let itemsToPost = this.comparePost(this.attributesSelectedTemp, this.attributesTemp)
-          for (let i = 0; i < itemsToPost.length; i++) {
-            const header = {
-              ContentType: 'application/x-www-form-urlencoded',
-              Accept: 'application/json'
-            }
-            axios.post('https://handpicked-refreshments.herokuapp.com/api/product/' + item.productID + '/attribute/' + itemsToPost[i], header)
-              .then(response => {
-                this.attributesSelected = []
-              })
-              .catch(error => {
-                console.log(error)
-              })
-          }
-        }, 300)
+        const header = {
+          ContentType: 'application/x-www-form-urlencoded',
+          Accept: 'application/json'
+        }
+        axios.post('https://handpicked-refreshments.herokuapp.com/api/product/' + item.productID + '/attribute/' + item.attributes, header)
+          .then(response => {
+            this.getAttributesByID(item, this.getAttributes)
+          })
+          .catch(error => {
+            console.log(error)
+            this.snackbar = true
+          })
       },
 
-      deleteAttributeToProduct (item) {
-        setTimeout(() => {
-          let itemsToDelete = this.compareDelete(this.attributesSelectedTemp, this.attributesNewTemp)
-          for (let i = 0; i < itemsToDelete.length; i++) {
-            const header = {
-              ContentType: 'application/x-www-form-urlencoded',
-              Accept: 'application/json'
-            }
-            axios.delete('https://handpicked-refreshments.herokuapp.com/api/product/' + item.productID + '/attribute/' + itemsToDelete[i], header)
-              .then(response => {
-                this.attributesSelected = []
-              })
-              .catch(error => {
-                console.log(error)
-              })
-          }
-        }, 300)
-      },
-
-      compareDelete (a1, a2) {
-        var result = []
-        for (var i = 0; i < a1.length; i++) {
-          if (a2.indexOf(a1[i]) === -1) {
-            result.push(a1[i])
-          }
+      deleteAttributeToProduct (item, aid) {
+        const header = {
+          ContentType: 'application/x-www-form-urlencoded',
+          Accept: 'application/json'
         }
-        for (i = 0; i < a2.length; i++) {
-          if (a1.indexOf(a2[i]) === -1) {
-            result.push(a2[i])
-          }
-        }
-        console.log('To delete: ' + result)
-        return result
-      },
-
-      comparePost (arr1, arr2) {
-        let unique = []
-        for (var i = 0; i < arr1.length; i++) {
-          var found = false
-          for (var j = 0; j < arr2.length; j++) {
-            if (arr1[i] === arr2[j]) {
-              found = true
-              break
-            }
-          }
-          if (found === false) {
-            unique.push(arr1[i])
-          }
-        }
-        console.log('To post: ' + unique)
-        return unique
+        axios.delete('https://handpicked-refreshments.herokuapp.com/api/product/' + item.productID + '/attribute/' + aid, header)
+          .then(response => {
+            this.getAttributesByID(item, this.getAttributes)
+          })
+          .catch(error => {
+            console.log(error)
+          })
       },
 
       updateProduct (item) {
