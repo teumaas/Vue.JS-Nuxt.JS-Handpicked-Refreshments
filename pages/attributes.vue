@@ -3,7 +3,7 @@
     <v-dialog v-model="createD" persistent max-width="500px">
         <v-card>
           <v-card-title>
-              <span class="headline">Vergaderruimte Toevoegen</span>
+              <span class="headline">Attribuut toevoegen</span>
           </v-card-title>
           <v-card-text>
             <v-container grid-list-md>
@@ -25,7 +25,7 @@
     <v-dialog v-model="editD" persistent max-width="500px">
         <v-card>
           <v-card-title>
-              <span class="headline">Vergaderruimte Bewerken</span>
+              <span class="headline">Attribuut Bbwerken</span>
           </v-card-title>
           <v-card-text>
             <v-container grid-list-md>
@@ -46,8 +46,8 @@
 
     <v-dialog v-model="deleteD" persistent max-width="290px">
       <v-card>
-        <v-card-title class="headline">Vergaderruimte Verwijderen</v-card-title>
-        <v-card-text>Weet u zeker dat de geselecteerde vergaderruimte wilt verwijderen?</v-card-text>
+        <v-card-title class="headline">Attribuut verwijderen</v-card-title>
+        <v-card-text>Weet u zeker dat het geselecteerde attribuut wilt verwijderen?</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" flat @click.native="deleteD = false">Annuleren</v-btn>
@@ -58,7 +58,7 @@
 
     <v-card-title>
       <v-flex style="margin-top: 15px;" xs12 sm6 text-xs-left>
-        <v-btn color="primary" @click="createItem()">Nieuwe attributen <v-icon dark> add</v-icon></v-btn>
+        <v-btn color="primary" @click="createItem()">Nieuw attribuut <v-icon dark> add</v-icon></v-btn>
       </v-flex>
       <v-spacer></v-spacer>
       <v-text-field v-model="search" append-icon="search" label="Zoeken..." single-line hide-details></v-text-field>

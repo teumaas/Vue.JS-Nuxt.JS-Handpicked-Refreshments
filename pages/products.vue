@@ -3,7 +3,7 @@
     <v-dialog v-model="createD" persistent max-width="500px">
         <v-card>
           <v-card-title>
-              <span class="headline">Product Toevoegen</span>
+              <span class="headline">Product toevoegen</span>
           </v-card-title>
           <v-card-text>
             <v-container grid-list-md>
@@ -38,7 +38,7 @@
     <v-dialog v-model="editD" persistent max-width="500px">
         <v-card>
           <v-card-title>
-              <span class="headline">Product Bewerken</span>
+              <span class="headline">Product bewerken</span>
           </v-card-title>
           <v-card-text>
             <v-container grid-list-md>
@@ -72,7 +72,7 @@
 
     <v-dialog v-model="deleteD" persistent max-width="290px">
       <v-card>
-        <v-card-title class="headline">Product Verwijderen</v-card-title>
+        <v-card-title class="headline">Product verwijderen</v-card-title>
         <v-card-text>Weet u zeker dat het geselecteerde product wilt verwijderen?</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>

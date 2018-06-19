@@ -3,7 +3,7 @@
     <v-dialog v-model="createD" persistent max-width="500px">
         <v-card>
           <v-card-title>
-              <span class="headline">Vergaderruimte Toevoegen</span>
+              <span class="headline">Vergaderruimte toevoegen</span>
           </v-card-title>
           <v-card-text>
             <v-container grid-list-md>
@@ -25,7 +25,7 @@
     <v-dialog v-model="editD" persistent max-width="500px">
         <v-card>
           <v-card-title>
-              <span class="headline">Vergaderruimte Bewerken</span>
+              <span class="headline">Vergaderruimte bewerken</span>
           </v-card-title>
           <v-card-text>
               <v-container grid-list-md>

@@ -128,7 +128,7 @@
 
     <v-dialog v-model="deleteD" persistent max-width="290px">
       <v-card>
-        <v-card-title class="headline">Categorie Verwijderen</v-card-title>
+        <v-card-title class="headline">Categorie verwijderen</v-card-title>
         <v-card-text>Weet u zeker dat u de geselecteerde categorie wilt verwijderen?</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>

@@ -3,7 +3,7 @@
     <v-dialog v-model="editD" persistent max-width="500px">
         <v-card>
           <v-card-title>
-              <span class="headline">Tablet Bewerken</span>
+              <span class="headline">Tablet bewerken</span>
           </v-card-title>
           <v-card-text>
             <v-container grid-list-md>
@@ -24,7 +24,7 @@
 
     <v-dialog v-model="deleteD" persistent max-width="290px">
       <v-card>
-        <v-card-title class="headline">Tablet Verwijderen</v-card-title>
+        <v-card-title class="headline">Tablet verwijderen</v-card-title>
         <v-card-text>Weet u zeker dat de geselecteerde tablet wilt verwijderen?</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
