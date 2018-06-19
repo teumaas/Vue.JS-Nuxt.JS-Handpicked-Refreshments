@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-dialog v-model="createD" persistent max-width="500px">
+    <v-dialog v-model="createD" persistent max-width="600px">
         <v-card>
           <v-card-title>
               <span class="headline">Product toevoegen</span>
@@ -22,6 +22,7 @@
                   <input type="file" style="display: none" ref="image" accept="image/*" @change="onFilePicked" required>
                 </v-flex>
                 <v-flex class="text-xs-center" xs6>
+                  <v-progress-circular :style="uploadingIMG" indeterminate color="primary"></v-progress-circular>
                   <img :src="imageUrl" height="150" v-if="imageUrl"/>
                 </v-flex>
               </v-layout>
@@ -35,7 +36,7 @@
         </v-card>
     </v-dialog>
 
-    <v-dialog v-model="editD" persistent max-width="500px">
+    <v-dialog v-model="editD" persistent max-width="600px">
         <v-card>
           <v-card-title>
               <span class="headline">Product bewerken</span>
@@ -57,6 +58,7 @@
                   <input type="file" style="display: none" ref="image" accept="image/*" @change="onFilePicked">
                 </v-flex>
                 <v-flex class="text-xs-center" xs6>
+                  <v-progress-circular :style="uploadingIMG" indeterminate color="primary"></v-progress-circular>
                   <img :src="imageUrl" height="150" v-if="imageUrl"/>
                 </v-flex>
               </v-layout>
@@ -65,7 +67,7 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="blue darken-1" flat @click.native="editD = false">Annuleren</v-btn>
-            <v-btn color="blue darken-1" flat @click="updateP(item)">Opslaan</v-btn>
+            <v-btn color="blue darken-1" :disabled="saveBtn" flat @click="updateP(item)">Opslaan</v-btn>
           </v-card-actions>
         </v-card>
     </v-dialog>
@@ -197,6 +199,7 @@
       loadingA: true,
       refreshBtn: false,
       saveBtn: true,
+      uploadingIMG: 'display: none;',
       imageName: '',
       imageUrl: '',
       imageFile: '',
@@ -478,7 +481,8 @@
           const fr = new FileReader()
           fr.readAsDataURL(files[0])
           fr.addEventListener('load', () => {
-            this.imageUrl = fr.result
+            this.uploadingIMG = null
+            this.imageUrl = null
             this.imageFile = files[0]
             /* Betere image afhandeling */
             this.fileUpload()
@@ -496,7 +500,9 @@
         axios.post('https://handpicked-refreshments.herokuapp.com/api/upload/', fd)
           .then(response => {
             this.item.imageURL = response.data
+            this.imageUrl = response.data
             this.saveBtn = false
+            this.uploadingIMG = 'display: none;'
           })
           .catch(error => {
             console.log(error)

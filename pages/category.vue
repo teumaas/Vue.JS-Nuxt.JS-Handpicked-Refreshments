@@ -45,6 +45,7 @@
                   <input type="file" style="display: none" ref="image" accept="image/*" @change="onFilePicked" required>
                 </v-flex>
                 <v-flex class="text-xs-center" xs6>
+                  <v-progress-circular :style="uploadingIMG" indeterminate color="primary"></v-progress-circular>
                   <img :src="imageUrl" height="150" v-if="imageUrl"/>
                 </v-flex>
               </v-layout>
@@ -57,7 +58,7 @@
             </v-flex>
             <v-flex xs12 sm6 md6>
               <v-btn color="blue darken-1" flat @click.native="createD = false">Annuleren</v-btn>
-              <v-btn color="blue darken-1" flat @click="createP(item)">Opslaan</v-btn>
+              <v-btn :disabled="saveBtn" color="blue darken-1" flat @click="createP(item)">Opslaan</v-btn>
             </v-flex>
           </v-card-actions>
         </v-card>
@@ -108,6 +109,7 @@
                   <input type="file" style="display: none" ref="image" accept="image/*" @change="onFilePicked">
                 </v-flex>
                 <v-flex class="text-xs-center" xs6>
+                  <v-progress-circular :style="uploadingIMG" indeterminate color="primary"></v-progress-circular>
                   <img :src="imageUrl" height="150" v-if="imageUrl"/>
                 </v-flex>
               </v-layout>
@@ -120,7 +122,7 @@
             </v-flex>
             <v-flex xs12 sm6 md6>
               <v-btn color="blue darken-1" flat @click.native="editD = false">Annuleren</v-btn>
-              <v-btn color="blue darken-1" flat @click="updateP(item)">Opslaan</v-btn>
+              <v-btn color="blue darken-1" :disabled="saveBtn" flat @click="updateP(item)">Opslaan</v-btn>
             </v-flex>
           </v-card-actions>
         </v-card>
@@ -166,11 +168,10 @@
           <td class="text-xs-left"></td>
           <td class="text-xs-left">{{ props.item.categoryID }}</td>
           <td class="text-xs-left">{{ props.item.name }}</td>
-          <td class="text-xs-left">{{ formatTimeOrDay(formatNumberToDay(props.item.beginDay), formatNumberToDay(props.item.endDay)) }}</td>
-          <td class="text-xs-left">{{ formatTimeOrDay(props.item.beginTime, props.item.endTime) }}</td>
+          <td class="text-xs-left">{{ formatTimeOrDay(props.item.beginTime, props.item.endTime, formatNumberToDay(props.item.beginDay), formatNumberToDay(props.item.endDay)) }}</td>
           <td class="text-xs-left">
             <v-avatar class="justify-left">
-              <img :src="props.item.imageURL" @click="imageItem(props.item)">    
+              <img :src="props.item.imageURL" :size="256" @click="imageItem(props.item)">    
             </v-avatar>
           </td>
           <td class="justify-left layout px-0">
@@ -208,6 +209,7 @@
       loading: true,
       refreshBtn: false,
       saveBtn: true,
+      uploadingIMG: 'display: none;',
       imageName: '',
       imageUrl: '',
       imageFile: '',
@@ -223,8 +225,7 @@
         },
         { text: 'Categorie ID', value: 'categoryID' },
         { text: 'Naam', value: 'name' },
-        { text: 'Beschikbaarheidsdagen', value: 'beginDay & endDay' },
-        { text: 'Beschikbaarheidstijden', value: 'beginTime & endTime' },
+        { text: 'Beschikbaarheid', value: 'time & day' },
         { text: 'Afbeelding', value: 'imageURL' },
         { text: 'Acties', value: 'name', sortable: false }
       ],
@@ -391,12 +392,12 @@
         return dayParse
       },
 
-      formatTimeOrDay (begin, end) {
-        let format = `${begin} / ${end}`
-        if (begin === null && end === null) {
+      formatTimeOrDay (beginTime, endTime, beginDay, endDay) {
+        let format = `${beginDay} ${beginTime} / ${endDay} ${endTime}`
+        if (beginDay === null && beginTime === null && endDay === null & endTime === null) {
           format = ''
         } else {
-          format = `${begin} t/m ${end}`
+          format = `${beginDay} ${beginTime} t/m ${endDay} ${endTime}`
         }
         return format
       },
@@ -472,7 +473,8 @@
           const fr = new FileReader()
           fr.readAsDataURL(files[0])
           fr.addEventListener('load', () => {
-            this.imageUrl = fr.result
+            this.uploadingIMG = null
+            this.imageUrl = null
             this.imageFile = files[0]
             /* Betere image afhandeling */
             this.fileUpload()
@@ -490,7 +492,9 @@
         axios.post('https://handpicked-refreshments.herokuapp.com/api/upload/', fd)
           .then(response => {
             this.item.imageURL = response.data
+            this.imageUrl = response.data
             this.saveBtn = false
+            this.uploadingIMG = 'display: none;'
           })
           .catch(error => {
             console.log(error)

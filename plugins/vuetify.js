@@ -19,7 +19,8 @@ import {
   VTimePicker,
   VSelect,
   VDataIterator,
-  VSnackbar
+  VSnackbar,
+  VProgressCircular
 } from 'vuetify'
 
 Vue.use(Vuetify, {
@@ -42,6 +43,7 @@ Vue.use(Vuetify, {
     VTimePicker,
     VSelect,
     VDataIterator,
-    VSnackbar
+    VSnackbar,
+    VProgressCircular
   }
 })
