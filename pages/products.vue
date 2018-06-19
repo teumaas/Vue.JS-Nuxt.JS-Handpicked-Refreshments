@@ -138,7 +138,7 @@
     </v-dialog>
 
     <v-card-title>
-      <v-snackbar color="error" timeout="6000" top="top" v-model="snackbar">Attribuut is al toegevoegd!<v-btn flat color="white" @click.native="snackbar = false">Close</v-btn></v-snackbar>
+      <v-snackbar color="error" timeout="6000" top="top" v-model="snackbar">Attribuut is al toegevoegd!<v-btn flat color="white" @click.native="snackbar = false">Sluiten</v-btn></v-snackbar>
       <v-flex style="margin-top: 15px;" xs12 sm6 text-xs-left>
         <v-btn color="primary" @click="createItem()">Nieuw product <v-icon dark> add</v-icon></v-btn>
       </v-flex>
