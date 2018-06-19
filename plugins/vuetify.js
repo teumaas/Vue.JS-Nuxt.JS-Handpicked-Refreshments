@@ -17,8 +17,8 @@ import {
   VAvatar,
   VProgressLinear,
   VTimePicker,
-  VSelect, 
-  VDataIterator, 
+  VSelect,
+  VDataIterator,
   VSnackbar
 } from 'vuetify'
 
@@ -40,8 +40,8 @@ Vue.use(Vuetify, {
     VAvatar,
     VProgressLinear,
     VTimePicker,
-    VSelect, 
-    VDataIterator, 
+    VSelect,
+    VDataIterator,
     VSnackbar
   }
 })
