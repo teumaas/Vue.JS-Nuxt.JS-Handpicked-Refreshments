@@ -9,7 +9,7 @@
             <v-container grid-list-md>
               <v-layout wrap>
                 <v-flex xs12>
-                  <v-text-field v-model="item.name" label="Naam"></v-text-field>
+                  <v-text-field v-model="item.name" label="Naam" required></v-text-field>
                 </v-flex>
               </v-layout>
             </v-container>
@@ -31,7 +31,7 @@
             <v-container grid-list-md>
               <v-layout wrap>
                 <v-flex xs12>
-                  <v-text-field v-model="item.name" label="Naam"></v-text-field>
+                  <v-text-field v-model="item.name" label="Naam" required></v-text-field>
                 </v-flex>
               </v-layout>
             </v-container>
