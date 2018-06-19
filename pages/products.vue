@@ -161,10 +161,10 @@
             <v-btn icon class="mx-0" @click="editItem(props.item)">
               <v-icon color="teal">edit</v-icon>
             </v-btn>
-            <v-btn icon class="mx-0" dark @click="deleteItem(props.item)">
+            <v-btn icon class="mx-0" @click="deleteItem(props.item)">
               <v-icon color="red">delete</v-icon>
             </v-btn>
-            <v-btn icon class="mx-0" dark @click="attributeItem(props.item)">
+            <v-btn icon class="mx-0" @click="attributeItem(props.item)">
               <v-icon color="blue">note_add</v-icon>
             </v-btn>
           </td>
