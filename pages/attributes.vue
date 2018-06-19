@@ -25,7 +25,7 @@
     <v-dialog v-model="editD" persistent max-width="500px">
         <v-card>
           <v-card-title>
-              <span class="headline">Attribuut Bbwerken</span>
+              <span class="headline">Attribuut Bewerken</span>
           </v-card-title>
           <v-card-text>
             <v-container grid-list-md>
