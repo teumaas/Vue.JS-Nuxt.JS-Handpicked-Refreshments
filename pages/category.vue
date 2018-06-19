@@ -116,7 +116,7 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-flex xs12 sm6 md6>
-              <v-btn color="blue darken-1" flat @click="removeAvailability(item)">Beschikbaarheid verwijeren</v-btn>
+              <v-btn color="blue darken-1" flat @click="removeAvailability(item)">Beschikbaarheid verwijderen</v-btn>
             </v-flex>
             <v-flex xs12 sm6 md6>
               <v-btn color="blue darken-1" flat @click.native="editD = false">Annuleren</v-btn>
