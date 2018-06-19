@@ -42,6 +42,6 @@ Vue.use(Vuetify, {
     VTimePicker,
     VSelect, 
     VDataIterator, 
-    VSnackbar 
+    VSnackbar
   }
 })
