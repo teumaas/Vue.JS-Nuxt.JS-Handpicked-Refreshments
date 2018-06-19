@@ -215,7 +215,6 @@
         { text: 'Naam', value: 'name' },
         { text: 'Categorie', value: 'categoryName' },
         { text: 'Afbeelding', value: 'imageURL' },
-        { text: 'Attributen', value: 'attributeID' },
         { text: 'Acties', value: 'name', sortable: false }
       ],
       products: [],
