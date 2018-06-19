@@ -15,9 +15,6 @@
                   <v-select :items="categories" v-model="item.category" label="Categorie" required></v-select>
                 </v-flex>
                 <v-flex xs12>
-                  <v-select :items="attributes" v-model="item.attribute" label="Attributen" multiple chips persistent-hint></v-select>
-                </v-flex>
-                <v-flex xs12>
                   <v-text-field style="display: none;" v-model="item.imageURL" label="Afbeelding"></v-text-field>
                 </v-flex>
                 <v-flex xs6>
@@ -273,6 +270,7 @@
       /* UI Logic for CRUD Functions. */
       createItem () {
         this.createD = true
+        this.getCategories()
       },
 
       editItem (item) {
