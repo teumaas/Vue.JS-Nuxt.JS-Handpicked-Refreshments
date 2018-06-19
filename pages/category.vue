@@ -122,7 +122,7 @@
             </v-flex>
             <v-flex xs12 sm6 md6>
               <v-btn color="blue darken-1" flat @click.native="editD = false">Annuleren</v-btn>
-              <v-btn color="blue darken-1" :disabled="saveBtn" flat @click="updateP(item)">Opslaan</v-btn>
+              <v-btn color="blue darken-1" :disabled="saveBtnEdit" flat @click="updateP(item)">Opslaan</v-btn>
             </v-flex>
           </v-card-actions>
         </v-card>
@@ -209,6 +209,7 @@
       loading: true,
       refreshBtn: false,
       saveBtn: true,
+      saveBtnEdit: false,
       uploadingIMG: 'display: none;',
       imageName: '',
       imageUrl: '',
@@ -461,6 +462,7 @@
 
       pickFile () {
         this.$refs.image.click()
+        this.saveBtnEdit = true
       },
 
       onFilePicked (e) {
@@ -494,6 +496,7 @@
             this.item.imageURL = response.data
             this.imageUrl = response.data
             this.saveBtn = false
+            this.saveBtnEdit = false
             this.uploadingIMG = 'display: none;'
           })
           .catch(error => {
