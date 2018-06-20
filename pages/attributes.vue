@@ -99,28 +99,28 @@
       createD: false,
       editD: false,
       deleteD: false,
-      search: '',
+      search: ``,
       loading: true,
       refreshBtn: false,
       headers: [
         {
-          align: 'center',
+          align: `center`,
           sortable: false,
-          value: 'name'
+          value: `name`
         },
-        { text: 'Attribuut ID', value: 'attributeID' },
-        { text: 'Naam', value: 'name' },
-        { text: 'Acties', value: 'name', sortable: false }
+        { text: `Attribuut ID`, value: `attributeID` },
+        { text: `Naam`, value: `name` },
+        { text: `Acties`, value: `name`, sortable: false }
       ],
       attributes: [],
       itemIndex: -1,
       item: {
         attributeID: 0,
-        name: ''
+        name: ``
       },
       defaultItem: {
         attributeID: 0,
-        name: ''
+        name: ``
       }
     }),
 
@@ -169,6 +169,7 @@
         this.createD = false
         this.editD = false
         this.deleteD = false
+        this.getAttributes()
         setTimeout(() => {
           this.item = Object.assign({}, this.defaultItem)
           this.itemIndex = -1
@@ -191,7 +192,7 @@
       getAttributes () {
         this.loading = true
         this.refreshBtn = false
-        axios.get('https://handpicked-refreshments.herokuapp.com/api/product/attribute/all')
+        axios.get(`https://handpicked-refreshments.herokuapp.com/api/product/attribute/all`)
           .then(response => {
             this.attributes = response.data
             this.loading = false
@@ -203,15 +204,15 @@
       },
 
       postAttribute (item) {
-        const querystring = require('querystring')
+        const querystring = require(`querystring`)
         const data = {
           name: item.name
         }
         const header = {
-          ContentType: 'application/x-www-form-urlencoded',
-          Accept: 'application/json'
+          ContentType: `application/x-www-form-urlencoded`,
+          Accept: `application/json`
         }
-        axios.post('https://handpicked-refreshments.herokuapp.com/api/product/attribute/', querystring.stringify(data), header)
+        axios.post(`https://handpicked-refreshments.herokuapp.com/api/product/attribute/`, querystring.stringify(data), header)
           .then(response => {
             this.getAttributes()
             this.close()
@@ -226,10 +227,10 @@
           name: item.name
         }
         const header = {
-          ContentType: 'application/x-www-form-urlencoded',
-          Accept: 'application/json'
+          ContentType: `application/x-www-form-urlencoded`,
+          Accept: `application/json`
         }
-        axios.put('https://handpicked-refreshments.herokuapp.com/api/product/attribute/' + item.attributeID, data, header)
+        axios.put(`https://handpicked-refreshments.herokuapp.com/api/product/attribute/${item.attributeID}`, data, header)
           .then(response => {
             this.getAttributes()
             this.close()
@@ -240,7 +241,7 @@
       },
 
       deleteAttribute (item) {
-        axios.delete('https://handpicked-refreshments.herokuapp.com/api/product/attribute/' + item.attributeID)
+        axios.delete(`https://handpicked-refreshments.herokuapp.com/api/product/attribute/${item.attributeID}`)
           .then(response => {
             this.getAttributes()
             this.close()

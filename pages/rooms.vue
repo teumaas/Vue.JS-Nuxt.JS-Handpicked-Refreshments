@@ -118,36 +118,36 @@
       editD: false,
       deleteD: false,
       deleteTabletD: false,
-      search: '',
+      search: ``,
       loading: true,
       refreshBtn: false,
       removeBtn: false,
       removeBtnDisplay: null,
       headers: [
         {
-          align: 'center',
+          align: `center`,
           sortable: false,
-          value: 'name'
+          value: `name`
         },
-        { text: 'Vergaderruimte ID', value: 'meetingRoomID' },
-        { text: 'Naam', value: 'name' },
-        { text: 'Tablet', value: 'tabletName' },
-        { text: 'Acties', value: 'name', sortable: false }
+        { text: `Vergaderruimte ID`, value: `meetingRoomID` },
+        { text: `Naam`, value: `name` },
+        { text: `Tablet`, value: `tabletName` },
+        { text: `Acties`, value: `name`, sortable: false }
       ],
       rooms: [],
       tablets: [],
       itemIndex: -1,
       item: {
         meetingRoomID: 0,
-        name: '',
-        tabletName: '',
-        hardwareID: ''
+        name: ``,
+        tabletName: ``,
+        hardwareID: ``
       },
       defaultItem: {
         meetingRoomID: 0,
-        name: '',
-        tabletName: '',
-        hardwareID: ''
+        name: ``,
+        tabletName: ``,
+        hardwareID: ``
       }
     }),
 
@@ -186,7 +186,7 @@
         this.editD = true
         if (item.hardwareID === null) {
           this.removeBtn = true
-          this.removeBtnDisplay = 'display: none;'
+          this.removeBtnDisplay = `display: none;`
         }
       },
 
@@ -207,6 +207,7 @@
         this.editD = false
         this.deleteD = false
         this.deleteTabletD = false
+        this.getRooms()
         setTimeout(() => {
           this.item = Object.assign({}, this.defaultItem)
           this.itemIndex = -1
@@ -235,7 +236,7 @@
       getRooms () {
         this.loading = true
         this.refreshBtn = false
-        axios.get('https://handpicked-refreshments.herokuapp.com/api/room/')
+        axios.get(`https://handpicked-refreshments.herokuapp.com/api/room/`)
           .then(response => {
             this.rooms = response.data
             this.loading = false
@@ -247,7 +248,7 @@
       },
 
       getTablets () {
-        axios.get('https://handpicked-refreshments.herokuapp.com/api/tablet')
+        axios.get(`https://handpicked-refreshments.herokuapp.com/api/tablet`)
           .then(response => {
             for (let i = 0; i < response.data.length; i++) {
               this.tablets.push({ value: response.data[i].tabletID, text: response.data[i].tabletName })
@@ -263,10 +264,10 @@
           name: item.name
         }
         const header = {
-          ContentType: 'application/x-www-form-urlencoded',
-          Accept: 'application/json'
+          ContentType: `application/x-www-form-urlencoded`,
+          Accept: `application/json`
         }
-        axios.post('https://handpicked-refreshments.herokuapp.com/api/room/', data, header)
+        axios.post(`https://handpicked-refreshments.herokuapp.com/api/room/`, data, header)
           .then(response => {
             this.getRooms()
             this.close()
@@ -281,10 +282,10 @@
           name: item.name
         }
         const header = {
-          ContentType: 'application/x-www-form-urlencoded',
-          Accept: 'application/json'
+          ContentType: `application/x-www-form-urlencoded`,
+          Accept: `application/json`
         }
-        axios.put('https://handpicked-refreshments.herokuapp.com/api/room/' + item.meetingRoomID, data, header)
+        axios.put(`https://handpicked-refreshments.herokuapp.com/api/room/${item.meetingRoomID}`, data, header)
           .then(response => {
             this.getRooms()
             this.close()
@@ -295,7 +296,7 @@
       },
 
       deleteRoom (item) {
-        axios.delete('https://handpicked-refreshments.herokuapp.com/api/room/' + item.meetingRoomID)
+        axios.delete(`https://handpicked-refreshments.herokuapp.com/api/room/${item.meetingRoomID}`)
           .then(response => {
             this.getRooms()
             this.close()
@@ -308,10 +309,10 @@
       deleteTabletInRoom (item) {
         const data = { data: { hardwareID: item.hardwareID } }
         const header = {
-          ContentType: 'application/x-www-form-urlencoded',
-          Accept: 'application/json'
+          ContentType: `application/x-www-form-urlencoded`,
+          Accept: `application/json`
         }
-        axios.delete('https://handpicked-refreshments.herokuapp.com/api/room/tablet/delete', data, header)
+        axios.delete(`https://handpicked-refreshments.herokuapp.com/api/room/tablet/delete`, data, header)
           .then(response => {
             this.getRooms()
             this.close()

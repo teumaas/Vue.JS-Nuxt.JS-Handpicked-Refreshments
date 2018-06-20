@@ -18,7 +18,7 @@
                   <v-text-field style="display: none;" v-model="item.imageURL" label="Afbeelding" required></v-text-field>
                 </v-flex>
                 <v-flex xs6>
-                  <v-text-field label="Selecteer afbeelding" @click='pickFile' v-model='imageName' required> </v-text-field>
+                  <v-text-field label="Selecteer afbeelding" @click="pickFile" v-model="imageName" required> </v-text-field>
                   <input type="file" style="display: none" ref="image" accept="image/*" @change="onFilePicked" required>
                 </v-flex>
                 <v-flex class="text-xs-center" xs6>
@@ -54,7 +54,7 @@
                   <v-text-field style="display: none;" v-model="item.imageURL" label="Afbeelding" required></v-text-field>
                 </v-flex>
                 <v-flex xs6>
-                  <v-text-field label="Selecteer afbeelding" @click='pickFile' v-model='imageName'> </v-text-field>
+                  <v-text-field label="Selecteer afbeelding" @click="pickFile" v-model="imageName"> </v-text-field>
                   <input type="file" style="display: none" ref="image" accept="image/*" @change="onFilePicked">
                 </v-flex>
                 <v-flex class="text-xs-center" xs6>
@@ -194,31 +194,31 @@
       deleteD: false,
       imageD: false,
       attributeD: false,
-      search: '',
+      search: ``,
       loading: true,
       loadingA: true,
       refreshBtn: false,
       saveBtn: true,
       saveBtnEdit: false,
-      uploadingIMG: 'display: none;',
-      imageName: '',
-      imageUrl: '',
-      imageFile: '',
-      tableStyle: '',
+      uploadingIMG: `display: none;`,
+      imageName: ``,
+      imageUrl: ``,
+      imageFile: ``,
+      tableStyle: ``,
       snackbar: false,
-      idA: '',
-      select: { text: 'Categorie' },
+      idA: ``,
+      select: { text: `Categorie` },
       headers: [
         {
-          align: 'center',
+          align: `center`,
           sortable: false,
-          value: 'name'
+          value: `name`
         },
-        { text: 'Product ID', value: 'productID' },
-        { text: 'Naam', value: 'name' },
-        { text: 'Categorie', value: 'categoryName' },
-        { text: 'Afbeelding', value: 'imageURL' },
-        { text: 'Acties', value: 'name', sortable: false }
+        { text: `Product ID`, value: `productID` },
+        { text: `Naam`, value: `name` },
+        { text: `Categorie`, value: `categoryName` },
+        { text: `Afbeelding`, value: `imageURL` },
+        { text: `Acties`, value: `name`, sortable: false }
       ],
       products: [],
       categories: [],
@@ -227,13 +227,13 @@
       itemIndex: -1,
       item: {
         productID: 0,
-        name: '',
-        imageURL: ''
+        name: ``,
+        imageURL: ``
       },
       defaultItem: {
         productID: 0,
-        name: '',
-        imageURL: ''
+        name: ``,
+        imageURL: ``
       }
     }),
 
@@ -336,7 +336,7 @@
       getProducts () {
         this.loading = true
         this.refreshBtn = false
-        axios.get('https://handpicked-refreshments.herokuapp.com/api/product/')
+        axios.get(`https://handpicked-refreshments.herokuapp.com/api/product/`)
           .then(response => {
             this.products = response.data
             this.loading = false
@@ -348,7 +348,7 @@
       },
 
       getCategories () {
-        axios.get('https://handpicked-refreshments.herokuapp.com/api/category/all')
+        axios.get(`https://handpicked-refreshments.herokuapp.com/api/category/all`)
           .then(response => {
             for (let i = 0; i < response.data.length; i++) {
               this.categories.push({ value: response.data[i].categoryID, text: response.data[i].name })
@@ -360,7 +360,7 @@
       },
 
       getAttributes () {
-        axios.get('https://handpicked-refreshments.herokuapp.com/api/product/attribute/all')
+        axios.get(`https://handpicked-refreshments.herokuapp.com/api/product/attribute/all`)
           .then(response => {
             for (let i = 0; i < response.data.length; i++) {
               this.attributes.push({ value: response.data[i].attributeID, text: response.data[i].name })
@@ -373,15 +373,15 @@
 
       getAttributesByID (item, callback) {
         console.log(item.attributeID)
-        axios.get('https://handpicked-refreshments.herokuapp.com/api/product/' + item.productID + '/attribute/')
+        axios.get(`https://handpicked-refreshments.herokuapp.com/api/product/${item.productID}/attribute/`)
           .then(response => {
-            this.tableStyle = 'margin-top: -70px;'
+            this.tableStyle = `margin-top: -70px;`
             this.attributesTable = response.data
             this.loadingA = false
           })
           .catch(error => {
             console.log(error)
-            this.tableStyle = 'display: none;'
+            this.tableStyle = `display: none;`
             this.loadingA = false
           })
         callback()
@@ -394,11 +394,11 @@
           categoryID: item.category
         }
         const header = {
-          ContentType: 'application/x-www-form-urlencoded',
-          Accept: 'application/json'
+          ContentType: `application/x-www-form-urlencoded`,
+          Accept: `application/json`
         }
 
-        axios.post('https://handpicked-refreshments.herokuapp.com/api/product/', data, header)
+        axios.post(`https://handpicked-refreshments.herokuapp.com/api/product/`, data, header)
           .then(response => {
             this.getProducts()
             this.close()
@@ -410,10 +410,10 @@
 
       postAttributeToProduct (item) {
         const header = {
-          ContentType: 'application/x-www-form-urlencoded',
-          Accept: 'application/json'
+          ContentType: `application/x-www-form-urlencoded`,
+          Accept: `application/json`
         }
-        axios.post('https://handpicked-refreshments.herokuapp.com/api/product/' + item.productID + '/attribute/' + item.attributes, header)
+        axios.post(`https://handpicked-refreshments.herokuapp.com/api/product/${item.productID}/attribute/${item.attributes}`, header)
           .then(response => {
             this.getAttributesByID(item, this.getAttributes)
           })
@@ -425,10 +425,10 @@
 
       deleteAttributeToProduct (item, aid) {
         const header = {
-          ContentType: 'application/x-www-form-urlencoded',
-          Accept: 'application/json'
+          ContentType: `application/x-www-form-urlencoded`,
+          Accept: `application/json`
         }
-        axios.delete('https://handpicked-refreshments.herokuapp.com/api/product/' + item.productID + '/attribute/' + aid, header)
+        axios.delete(`https://handpicked-refreshments.herokuapp.com/api/product/${item.productID}/attribute/${aid}`, header)
           .then(response => {
             this.getAttributesByID(item, this.getAttributes)
           })
@@ -444,10 +444,10 @@
           categoryID: item.category
         }
         const header = {
-          ContentType: 'application/x-www-form-urlencoded',
-          Accept: 'application/json'
+          ContentType: `application/x-www-form-urlencoded`,
+          Accept: `application/json`
         }
-        axios.put('https://handpicked-refreshments.herokuapp.com/api/product/' + item.productID, data, header)
+        axios.put(`https://handpicked-refreshments.herokuapp.com/api/product/${item.productID}`, data, header)
           .then(response => {
             this.getProducts()
             this.close()
@@ -458,7 +458,7 @@
       },
 
       deleteProduct (item) {
-        axios.delete('https://handpicked-refreshments.herokuapp.com/api/product/' + item.productID)
+        axios.delete(`https://handpicked-refreshments.herokuapp.com/api/product/${item.productID}`)
           .then(response => {
             this.getProducts()
             this.close()
@@ -477,12 +477,12 @@
         const files = e.target.files
         if (files[0] !== undefined) {
           this.imageName = files[0].name
-          if (this.imageName.lastIndexOf('.') <= 0) {
+          if (this.imageName.lastIndexOf(`.`) <= 0) {
             return
           }
           const fr = new FileReader()
           fr.readAsDataURL(files[0])
-          fr.addEventListener('load', () => {
+          fr.addEventListener(`load`, () => {
             this.uploadingIMG = null
             this.imageUrl = null
             this.imageFile = files[0]
@@ -490,22 +490,22 @@
             this.fileUpload()
           })
         } else {
-          this.imageName = ''
-          this.imageFile = ''
-          this.imageUrl = ''
+          this.imageName = ``
+          this.imageFile = ``
+          this.imageUrl = ``
         }
       },
 
       fileUpload () {
         const fd = new FormData()
-        fd.append('fileUpload', this.imageFile, this.imageFile.name)
-        axios.post('https://handpicked-refreshments.herokuapp.com/api/upload/', fd)
+        fd.append(`fileUpload`, this.imageFile, this.imageFile.name)
+        axios.post(`https://handpicked-refreshments.herokuapp.com/api/upload/`, fd)
           .then(response => {
             this.item.imageURL = response.data
             this.imageUrl = response.data
             this.saveBtn = false
             this.saveBtnEdit = false
-            this.uploadingIMG = 'display: none;'
+            this.uploadingIMG = `display: none;`
           })
           .catch(error => {
             console.log(error)

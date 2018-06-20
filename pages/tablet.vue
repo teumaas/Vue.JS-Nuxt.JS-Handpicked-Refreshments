@@ -74,31 +74,31 @@
     data: () => ({
       editD: false,
       deleteD: false,
-      search: '',
+      search: ``,
       loading: true,
       refreshBtn: false,
       headers: [
         {
-          align: 'center',
+          align: `center`,
           sortable: false,
-          value: 'name'
+          value: `name`
         },
-        { text: 'Tablet ID', value: 'tabletID' },
-        { text: 'Naam', value: 'tabletName' },
-        { text: 'Hardware ID', value: 'hardwareID' },
-        { text: 'Acties', value: 'name', sortable: false }
+        { text: `Tablet ID`, value: `tabletID` },
+        { text: `Naam`, value: `tabletName` },
+        { text: `Hardware ID`, value: `hardwareID` },
+        { text: `Acties`, value: `name`, sortable: false }
       ],
       tablets: [],
       itemIndex: -1,
       item: {
         tabletID: 0,
-        tabletName: '',
-        hardwareID: ''
+        tabletName: ``,
+        hardwareID: ``
       },
       defaultItem: {
         tabletID: 0,
-        tabletName: '',
-        hardwareID: ''
+        tabletName: ``,
+        hardwareID: ``
       }
     }),
 
@@ -138,6 +138,7 @@
       close () {
         this.editD = false
         this.deleteD = false
+        this.getTablets()
         setTimeout(() => {
           this.item = Object.assign({}, this.defaultItem)
           this.itemIndex = -1
@@ -156,7 +157,7 @@
       getTablets () {
         this.loading = true
         this.refreshBtn = false
-        axios.get('https://handpicked-refreshments.herokuapp.com/api/tablet')
+        axios.get(`https://handpicked-refreshments.herokuapp.com/api/tablet`)
           .then(response => {
             this.tablets = response.data
             this.loading = false
@@ -173,10 +174,10 @@
           hardwareID: item.hardwareID
         }
         const header = {
-          ContentType: 'application/x-www-form-urlencoded',
-          Accept: 'application/json'
+          ContentType: `application/x-www-form-urlencoded`,
+          Accept: `application/json`
         }
-        axios.put('https://handpicked-refreshments.herokuapp.com/api/tablet', data, header)
+        axios.put(`https://handpicked-refreshments.herokuapp.com/api/tablet`, data, header)
           .then(response => {
             this.getTablets()
             this.close()
@@ -187,7 +188,7 @@
       },
 
       deleteTablet (item) {
-        axios.delete('https://handpicked-refreshments.herokuapp.com/api/tablet/' + item.tabletID)
+        axios.delete(`https://handpicked-refreshments.herokuapp.com/api/tablet/` + item.tabletID)
           .then(response => {
             this.getTablets()
             this.close()

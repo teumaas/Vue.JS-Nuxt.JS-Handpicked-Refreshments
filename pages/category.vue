@@ -41,7 +41,7 @@
                   <v-text-field style="display: none;" v-model="item.imageURL" label="Afbeelding" required></v-text-field>
                 </v-flex>
                 <v-flex xs6>
-                  <v-text-field label="Selecteer afbeelding" @click='pickFile' v-model='imageName' required> </v-text-field>
+                  <v-text-field label="Selecteer afbeelding" @click="pickFile" v-model="imageName" required> </v-text-field>
                   <input type="file" style="display: none" ref="image" accept="image/*" @change="onFilePicked" required>
                 </v-flex>
                 <v-flex class="text-xs-center" xs6>
@@ -105,7 +105,7 @@
                   <v-text-field style="display: none;" v-model="item.imageURL" label="Afbeelding"></v-text-field>
                 </v-flex>
                 <v-flex xs6>
-                  <v-text-field label="Selecteer afbeelding" @click='pickFile' v-model='imageName'> </v-text-field>
+                  <v-text-field label="Selecteer afbeelding" @click="pickFile" v-model="imageName"> </v-text-field>
                   <input type="file" style="display: none" ref="image" accept="image/*" @change="onFilePicked">
                 </v-flex>
                 <v-flex class="text-xs-center" xs6>
@@ -205,47 +205,47 @@
       editD: false,
       deleteD: false,
       imageD: false,
-      search: '',
+      search: ``,
       loading: true,
       refreshBtn: false,
       saveBtn: true,
       saveBtnEdit: false,
-      uploadingIMG: 'display: none;',
-      imageName: '',
-      imageUrl: '',
-      imageFile: '',
+      uploadingIMG: `display: none;`,
+      imageName: ``,
+      imageUrl: ``,
+      imageFile: ``,
       cModalBeginTime: false,
       cModalEndTime: false,
       eModalBeginTime: false,
       eModalEndTime: false,
       headers: [
         {
-          align: 'center',
+          align: `center`,
           sortable: false,
-          value: 'name'
+          value: `name`
         },
-        { text: 'Categorie ID', value: 'categoryID' },
-        { text: 'Naam', value: 'name' },
-        { text: 'Beschikbaarheid', value: 'time & day' },
-        { text: 'Afbeelding', value: 'imageURL' },
-        { text: 'Acties', value: 'name', sortable: false }
+        { text: `Categorie ID`, value: `categoryID` },
+        { text: `Naam`, value: `name` },
+        { text: `Beschikbaarheid`, value: `time & day` },
+        { text: `Afbeelding`, value: `imageURL` },
+        { text: `Acties`, value: `name`, sortable: false }
       ],
       days: [
-        { text: 'Selecteer dag', value: null },
-        { text: 'Maandag', value: 0 },
-        { text: 'Dinsdag', value: 1 },
-        { text: 'Woensdag', value: 2 },
-        { text: 'Donderdag', value: 3 },
-        { text: 'Vrijdag', value: 4 },
-        { text: 'Zaterdag', value: 5 },
-        { text: 'Zondag', value: 6 }
+        { text: `Selecteer dag`, value: null },
+        { text: `Maandag`, value: 0 },
+        { text: `Dinsdag`, value: 1 },
+        { text: `Woensdag`, value: 2 },
+        { text: `Donderdag`, value: 3 },
+        { text: `Vrijdag`, value: 4 },
+        { text: `Zaterdag`, value: 5 },
+        { text: `Zondag`, value: 6 }
       ],
       categories: [],
       itemIndex: -1,
       item: {
         categoryID: 0,
-        name: '',
-        imageURL: '',
+        name: ``,
+        imageURL: ``,
         beginDay: null,
         endDay: null,
         beginTime: null,
@@ -253,8 +253,8 @@
       },
       defaultItem: {
         categoryID: 0,
-        name: '',
-        imageURL: '',
+        name: ``,
+        imageURL: ``,
         beginDay: null,
         endDay: null,
         beginTime: null,
@@ -354,7 +354,7 @@
       getCategories () {
         this.loading = true
         this.refreshBtn = false
-        axios.get('https://handpicked-refreshments.herokuapp.com/api/category/all')
+        axios.get(`https://handpicked-refreshments.herokuapp.com/api/category/all`)
           .then(response => {
             this.categories = response.data
             this.loading = false
@@ -369,25 +369,25 @@
         let dayParse = item
         switch (dayParse) {
           case 0:
-            dayParse = 'Maandag'
+            dayParse = `Maandag`
             break
           case 1:
-            dayParse = 'Dinsdag'
+            dayParse = `Dinsdag`
             break
           case 2:
-            dayParse = 'Woensdag'
+            dayParse = `Woensdag`
             break
           case 3:
-            dayParse = 'Donderdag'
+            dayParse = `Donderdag`
             break
           case 4:
-            dayParse = 'Vrijdag'
+            dayParse = `Vrijdag`
             break
           case 5:
-            dayParse = 'Zaterdag'
+            dayParse = `Zaterdag`
             break
           case 6:
-            dayParse = 'Zondag'
+            dayParse = `Zondag`
             break
         }
         return dayParse
@@ -396,7 +396,7 @@
       formatTimeOrDay (beginTime, endTime, beginDay, endDay) {
         let format = `${beginDay} ${beginTime} / ${endDay} ${endTime}`
         if (beginDay === null && beginTime === null && endDay === null & endTime === null) {
-          format = ''
+          format = ``
         } else {
           format = `${beginDay} ${beginTime} t/m ${endDay} ${endTime}`
         }
@@ -413,10 +413,10 @@
           endTime: item.endTime
         }
         const header = {
-          ContentType: 'application/x-www-form-urlencoded',
-          Accept: 'application/json'
+          ContentType: `application/x-www-form-urlencoded`,
+          Accept: `application/json`
         }
-        axios.post('https://handpicked-refreshments.herokuapp.com/api/category/', data, header)
+        axios.post(`https://handpicked-refreshments.herokuapp.com/api/category/`, data, header)
           .then(response => {
             this.getCategories()
             this.close()
@@ -436,10 +436,10 @@
           endTime: item.endTime
         }
         const header = {
-          ContentType: 'application/x-www-form-urlencoded',
-          Accept: 'application/json'
+          ContentType: `application/x-www-form-urlencoded`,
+          Accept: `application/json`
         }
-        axios.put('https://handpicked-refreshments.herokuapp.com/api/category/' + item.categoryID, data, header)
+        axios.put(`https://handpicked-refreshments.herokuapp.com/api/category/${item.categoryID}`, data, header)
           .then(response => {
             this.getCategories()
             this.close()
@@ -450,7 +450,7 @@
       },
 
       deleteCategory (item) {
-        axios.delete('https://handpicked-refreshments.herokuapp.com/api/category/' + item.categoryID)
+        axios.delete(`https://handpicked-refreshments.herokuapp.com/api/category/${item.categoryID}`)
           .then(response => {
             this.getCategories()
             this.close()
@@ -469,12 +469,12 @@
         const files = e.target.files
         if (files[0] !== undefined) {
           this.imageName = files[0].name
-          if (this.imageName.lastIndexOf('.') <= 0) {
+          if (this.imageName.lastIndexOf(`.`) <= 0) {
             return
           }
           const fr = new FileReader()
           fr.readAsDataURL(files[0])
-          fr.addEventListener('load', () => {
+          fr.addEventListener(`load`, () => {
             this.uploadingIMG = null
             this.imageUrl = null
             this.imageFile = files[0]
@@ -482,22 +482,22 @@
             this.fileUpload()
           })
         } else {
-          this.imageName = ''
-          this.imageFile = ''
-          this.imageUrl = ''
+          this.imageName = ``
+          this.imageFile = ``
+          this.imageUrl = ``
         }
       },
 
       fileUpload () {
         const fd = new FormData()
-        fd.append('fileUpload', this.imageFile, this.imageFile.name)
-        axios.post('https://handpicked-refreshments.herokuapp.com/api/upload/', fd)
+        fd.append(`fileUpload`, this.imageFile, this.imageFile.name)
+        axios.post(`https://handpicked-refreshments.herokuapp.com/api/upload/`, fd)
           .then(response => {
             this.item.imageURL = response.data
             this.imageUrl = response.data
             this.saveBtn = false
             this.saveBtnEdit = false
-            this.uploadingIMG = 'display: none;'
+            this.uploadingIMG = `display: none;`
           })
           .catch(error => {
             console.log(error)
