@@ -2,9 +2,9 @@
 
 > Nuxt.js + Vuetify.js project
 
-# Info
+## Application info
 
-A web app for managing drinks commissioned by Handpicked Agencies. 
+A web app for managing drinks commissioned by Handpicked Agencies.
 
 ## Build Setup
 
