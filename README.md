@@ -2,6 +2,10 @@
 
 > Nuxt.js + Vuetify.js project
 
+# Info
+
+A web app for managing drinks commissioned by Handpicked Agencies. 
+
 ## Build Setup
 
 ``` bash
